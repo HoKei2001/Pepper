@@ -1,0 +1,219 @@
+Transfer Learning With Long Short-Term Memory Network for State-of-Health Prediction of Lithium-Ion Batteries
+
+Yandan Tan and Guangcai Zhao
+
+Manuscript received April 5, 2019; revised June 30, 2019 and August 29, 2019; accepted September 30, 2019. Date of publication October 15, 2019; date of current version June 3, 2020. This work was supported in part by the National Natural Science Fund of China under Grant 61501428 and in part by Science and Technology Department of Fujian Province under Grant 2018H0043. _(Yandan Tan and Guangcai Zhao contributed equally to this work) (Corresponding author: Yandan Tan)_. Y. Tan is with the Ouanzhou Institute of Equipment Manufacturing, Haiai Institutes, Chinese Academy of Sciences, Jinjiang 362200, China, and also with the North University of China, Taiyuan 030051, China (e-mail: s1751057@st.nuc.edu.cn).
+G. Zhao is with the Quanzhou Institute of Equipment Manufacturing, Haiai Institutes, Chinese Academy of Sciences, Jinjiang 362200, China, and also with the University of Chinese Academy of Sciences, Beijing 100049, China (e-mail: Haougangcai17@mails.ucas.ac.cn).Color versions of one or more of the figures in this article are available online at [http://ieeexplore.ieee.org.Digital](http://ieeexplore.ieee.org.Digital) Object Identifier 10.1109/TIE.2019.2946551
+
+###### Abstract
+
+Existing state-of-health (SOH) data-driven prediction techniques for lithium-ion batteries are subject to mass training data, which leads to limited application. To face the challenge, in this article, we propose a novel SOH prediction method based on transfer learning. The long short-term memory (LSTM) combined with fully connected (FC) layers is designed as the base model. The LSTM can learn the long-term dependencies of battery aging to reduce the noise sensitivity of the prediction model, and the FC layers serve as the "firewall" during the transferring process. A feature expression scoring (FES) rule is developed to assess the relevance of multiple prediction tasks.
+ Different from traditional transfer learning, we select the task with the highest FES score to obtain the base model with superior generalization performance. During transfer learning, the fine-tuning strategy is executed for the tasks with high scores, but rebuilding strategy for the low score one. Only using the first 25% of a dataset for transfer training, our technique can predict more phases compared to traditional data-driven methods, which will avoid more unreasonable operations from users. The experimental results verify that the proposed method can achieve accurate, fast, and steady SOH prediction.
+Compared to some existing data-driven methods, our method obtains optimal performance.
+
+ Feature expression scoring (FES), lithium-ion battery (LIB), long short-term memory (LSTM), state-of-health (SOH), transfer learning.
+
+## I Introduction
+
+ lithium-ion batteries (LIBs) exhibit the advantages of high energy density, long lifetime, superior stability, and low environmental impact. Therefore, LIBs have been widely used as the optimal energy storage equipment. However, the batteries with a capacity below 80% of its initial capacity could result in faster-degraded capability, unavailable operations, and even permanent damages to the power devices.
+
+Accurate state-of-health (SOH) estimation of LIBs could enable users to perform battery maintenance more rationally to improve the safe use of the battery. However, the complex internal chemical structure of LIBs and different working environments result in considerably complicated degradation processes of LIBs. Thus, it is difficult to predict the SOH of LIBs accurately. Currently, LIBs' SOH prediction methods can be generally separated into the following three categories.
+
+1. Direct measurement method: This method mainly estimates SOH of LIBs based on terminal voltage, measured current, and impedance. The open-circuit voltage (OCV) [1] and Coulomb-counting [2] methods can obtain the current maximum battery capacity, which is convenient and with low computational complexity. Yet, the OCV method that determines the capacity based on the relationship between the OCV and the state of charge (SOC), requires a long rest time to achieve a steady battery state to estimate the SOH. The Coulomb-counting method obtains the SOH by integrating the current of the full charge-discharge process, which is time consuming [3].
+For the method, the accumulated error and sensor noise are not easy to conquer. Besides, the internal impedance-based method [4] that measures battery impedance at different SOCs and temperature conditions, is an accurate-measurement technique but susceptible to the laboratory temperature and the present measurement equipment.
+2. Model-based method: To overcome the drawbacks of the direct-measurement method, the model-based method mainly connects the measured battery signals (voltage, current, and temperature) with the SOH based on electrical or electrochemical models. Typically, the SOH can be estimated directly or indirectly. Based on other estimated parameters (OCV and SOC), the indirect method mainly combines observers (such as dual slide mode observer [5] and Lyapunov-based observers [6]) or filtering approaches to predict the SOH. Wei _et al_. [7] combined particle filter (PF) coupled with support vector regression (SVR) to diagnose SOH, which can simulate battery degradation and provide estimated results based on the actual measured battery parameters.
+To further improve accuracy, Dong _et al_. [8] introduced a combined strategy of Brownian motion and PF for SOH estimation, which enables accurate short-term prediction of SOH.
+The model-based methods could achieve good robustness and are easily applied for online battery energy storage with different chemistries [9].
+ However, the deep knowledge of the electrochemical mechanism is generally involved. Furthermore, a mutual flaw still exists. The accuracy of the predicted results highly relies on the precision of the battery model, but the precise battery models could pose an obvious threat on computational burden [10].
+3. Data-driven method: Compared to model-based approach, the data-driven method recognizes a battery system as a black-box that predicts SOH solely based on key historical degradation information. At present, machine learning and deep learning are the research hotspots of SOH prediction. Lin _et al_. [11] covered that probabilistic neural networks (PNN) were adaptive to SOH estimation of LIBs when enough training samples were available. However, a transient voltage spike could mislead PNN. Wu _et al_. [12] utilized the group method of data handling (GMDH) to establish the relationship between the differential geometric properties and SOH to predict the current state.
+The approach avoided a lot of training data. Besides, Dai _et al_. [13] adopted the prior knowledge-based neural network and the Markov chain to predict SOH. Although the predicted accuracy was gradually improved, these methods randomly selected mass data from all degradation process of LIBs to train the prediction model, which greatly limits the model application in real life. Further, based on the voltage data of charging curve from NASA datasets, Yang _et al_. [14] employed the Gaussian process regression (GPR) model to predict SOH, where the first 49% of a dataset was selected as the training set. Yet, the predicted performance of the model deteriorated during the testing phase.
+In general, these methods predicted SOH based on the transient information of battery degradation, which results in a noise-sensitive model. The subtle differences sensing in the data would be interpreted as aging effects by the prediction model.
+
+To achieve a more robust SOH prediction, Yo _et al_. [15] applied the long short-term memory (LSTM) network to predict SOH of an electric vehicle battery. They highlighted that the LSTM was adaptable to handling sequential data, for the LSTM was with an internal structure that could collect key history degeneration. The proposed method could provide robust and flexible results in case of noise interference. The LSTM network was reported as a powerful tool to learn long-term dependencies [16]. Currently, the LSTM was also applied to predict the remaining useful lifetime (RUL) [17] and SOC [18] of LIBs. Zhang _et al_. [17] pointed out the LSTM can better learn the long-term dependencies of hundreds of cycles based on limited degradation data.
+Compared with the support vector machine, PF, and simple recurrent neural network, the LSTM could predict RUL more accurately and in advance.
+Furthermore, Chemali _et al_. [18] verified that the LSTM could estimate LIBs' SOC accurately.
+As a data-driven approach, the LSTM has made a breakthrough contribution to predict the relevant state of LIBs, but the "Achilles heel" of deep learning is seriously limited by the mass training set, which inevitably results in limited application.
+ For the users, current SOHs of LIBs are unpredictable during the model training phases, so more training data would lead to more frequently unreasonable operations. Pan _et al_. [19] reported that transfer learning could reuse training-completed models in another related task, which reduces the time and data-required to train different prediction models. In terms of LIBs, local attenuation characteristics of different batteries are quite different, but overall degradation similarly depends on the long-term changes of critical information. Hence, to embrace the existing challenges for SOH prediction, we proposed a novel LIBs' SOH prediction method based on transfer learning. The LSTM network combined with fully connected (FC) layers were designed as the base model.
+ The LSTM could reduce the noise sensitivity of the model to assist in achieving robust prediction performance.
+  During the transfer learning process, the LSTM was frozen as the shared hidden layer to capture similar properties of the long-term dependencies, but the FC layers were set to be adjustable as the "firewall" to learn private properties for different LIBs. To implement transfer learning successfully, a feature expression scoring (FES) rule was developed to assess the relevance of multiple predicted tasks with different sample size. We selected the task with the highest FES score as the best representative task to train the base model. In this article, the "task" refers to the SOH prediction for a lithium battery dataset. During transfer learning, the fine-tuning FC strategy was executed for the task with a high score, but the rebuilding FC strategy for low score one to learn a larger difference between the source and target domains.
+  Compared to most data-driven SOH prediction works, the features of this article were obtained only based on the voltage data of constant current (CC) charging process that is remarkably convenient for practical operations. During transferring phase, we only employed the first 25% of a dataset to train the transfer model, which significantly improves the practicability of the prediction model.
+
+The remainder of this article is organized as follows. Section II reports the degradation feature extraction based on CC charge curves. Section III describes the proposed SOH prediction methodologies, followed by the experimental results, and analysis in Section IV. Section V concludes this article.
+
+## II Degradation Feature Extraction
+
+In this section, we extracted the features that effectively reflect the aging characteristics of LIBs, and the gray relational analysis (GRA) was performed to verify the validity of the extracted parameters.
+
+### _Definition of SOH_
+
+The SOH plays a key indicator in reflecting LIBs' degradation. Currently, there is no uniform definition of SOH. The battery capacity, internal resistance, and cycle number all could represent SOH [20], where the capacity is the most widely used representation, shown as follows:
+
+\[\mathrm{SOH}=\frac{C_{\mathrm{current}}}{C_{\mathrm{new}}}\times 100\% \tag{1}\]
+
+where \(C_{\mathrm{new}}\) and \(C_{\mathrm{current}}\) is the rated and current capacity, respectively. A fresh cell's SOH is 100%. With the accumulation of usage time, irreversible internal chemical and physical processes usually result in SOH decreasing, which is termed as battery aging.
+
+### Experimental Data
+
+Two datasets of LIBs were selected in this article. One is from the NASA Ames Prognostics Center of Excellence [21], and the other is from the Center for Advanced Life Cycle Engineering (CALCE) of the University of Maryland [22, 23].
+
+1. The batteries from NASA repository are commercially available 18650 lithium battery, with the rated capacity of 2 Ah. The B5, B6, and B7 battery datasets were selected for this article. The accelerated aging process was achieved by repeatedly performing with the charging, discharging, and impedance test operations at room temperature of 24 \({}^{\circ}\)C, which could reflect conventional degradation performance. The charging was performed at 1.5 A in CC mode until the battery voltage reached 4.2 V, and then continued in constant voltage mode until the charge current dropped to 20 mA. After that, the discharging was carried out at 2 A in CC mode until battery voltages dropped to 2.7, 2.5, and 2.2 V, respectively. Impedance measurements provided the internal capacity of battery aging.
+The SOH curves of NASA batteries are shown in Fig. 1(a).
+2. The CALCE datasets were tested cyclically by the US Arbin BT2000 battery test system. The CS35, CS36, CS37, and CS38 datasets were selected for this article. These batteries were implemented and showed similar operations as the selected NASA batteries showed. The SOH curves are shown in Fig. 1(b).
+
+### Feature Selection Based on CC Charging Curves
+
+Conventionally, compared to the current, the voltage can be more easily and precisely measured. Besides, compared to the uncertain discharging process, the charging data are more convenient to be obtained and with better time-dependent properties. So, we extracted the aging features only based on the voltage curve during the CC charging phase. Fig. 2(a) depicts the charging curve of B5. It can be observed that as the SOH reduces, the curve slope of the CC charging phase gradually becomes steep. To extract local attenuation characteristics, we divided the CC charging process curves into four intervals based on voltage variation. The first interval is the start voltage to 3.85 V. The 3.85 V was mainly be set to include maximum start voltage for a battery. The start voltage was recorded as the first feature \(F_{1}\).
+Considering that the curve slope of previous parts changes more steeply, we split the following curve into 2:3:5 based on the voltage value. Based on the geometrical analysis of the CC charging curve, we designed nine features, shown in Fig. 2(b).
+
+1. \(F_{2}\), \(F_{3}\), \(F_{4}\), \(F_{5}\): As LIBs' aging occurs, the storage capacity of a battery would be weakened, so the time stamp of reaching the same voltage would be shortened. Hence, we designed this set of features to record the time stamp when the voltage reaches the interval point. For example, \(F_{2}\) is the time stamp when the charging voltage reaches 3.85 V, and \(F_{3}\), \(F_{4}\), and \(F_{5}\) represent the time stamp when the voltages reach the second, third, and fourth interval point, respectively. \(F_{5}\) is also the CC charging duration.
+2. \(F_{6},F_{7},F_{8},F_{9}\): According to Faraday's law of electromagnetic induction, the magnetic flux is equal to the integral
+
+Fig. 1: SOH curve of battery dataset.
+
+Fig. 2: (a) Voltage curve of B5 at different SOH status. (b) Graphical representation of the features-extracted.
+
+of voltage versus time, which reflects the power supply capability for generators. For a battery, the magnitude of magnetic flux could be regarded as power storage capacity. As the SOH decreases, the magnetic flux reduces. Here, we utilized the trapezoidal formula to approximate the integral value in different time intervals as features, calculated as follows:
+
+\[\int_{T_{j}}^{T_{j+1}}V(t)\;dt\;=\sum_{k=0}^{n-1}\frac{1}{2f}\cdot(V(t_{k})+V(t_ {k+1})) \tag{2}\]
+
+where \(j=0,\;1,\;2,\;3\), and \(T_{j+1}-T_{j}\) is the time interval of feature extraction, and \(f\) is the sampling frequency. \(n\) is the sampling number in a time interval and equals \((T_{j+1}-T_{j})*f\).
+
+### Gray Relational Analysis for the Extracted Features
+
+To verify the validity of the extracted features, the GRA was utilized as the evaluation criteria [24]. Table I shows the GRA process in detail. Table II presents GRA results between nine features and SOHs. Based on the GRA evaluation rules, the closer the gray relational grade \(r\) is to 1, the better the correlation between SOH and the features would be. The GRA results display the average correlation grade of each feature is greater than 0.5, which means the features-extracted are reasonable.
+
+## III Methodologies
+
+In this section, we proposed a novel SOH prediction method based on transfer learning. We combined the LSTM with FC layers as the base model, where the LSTM could learn the long-term dependencies of LIBs to reduce noise sensitive of the prediction model. An FES rule was developed to assess the relevance of multiple prediction tasks, which assists in selecting the best representative task to train the base model and determining the transfer strategies.
+
+### Feature Expression Scoring Rule
+
+As the pretraining model for transfer learning, the base model that could optimally learn the commonality of multiple tasks would be with superior generalization performance during the transfer learning process. Besides, there is a positive correlation between the transfer learning performance and the relevance between the related tasks [19]. Hence, we developed an FES rule to calculate the relevance of a task with other tasks to help to execute transfer learning successfully, where the relevance is proportional to the FES score. Specifically, we defined the features with GRA where \(r>0.9\) as positive expression features. For a certain task, if there is a feature with \(r>0.9\), then count the number of the feature with \(r>0.9\) from other tasks, and the number is recorded as the FES score of the feature of the task.
+Then, the scores of other features of the task are counted. Finally, the total score is the FES score for this task. The FES process is detailed in Table III. The task with highest FES score is also with the best commonality with other prediction tasks, so we selected the task to train the base model. For the tasks with relatively high FES scores, the fine-tuning FC layers are the recommended strategies for transfer learning. By contrast, the strategy of rebuilding FC layers would abandon some acquired capabilities that is only useful for the tasks with large differences between the source and target domains to learn more differences. Hence, for the task with low FES score, we would rebuild the FC layers.
+
+Table IV presents the FES scores of the prediction tasks selected, which reveals that the prediction tasks of B7 and CS35 are with the highest FES score. Considering that the features with \(r>0.9\) are the positive expression features, the task with the max \(\sum_{l}r_{l}(r>0.9)\)was selected as the best representative task. Here, \(\sum_{l}r_{l}(r>0.9)=3.817\) for B7 and 3.813 for CS35, so the B7 was utilized to train the LSTM-FC.
+
+### LSTM-FC as the Base Model
+
+The establishment of the base model for SOH prediction faces two major challenges. First, whether the base model could obtain outstanding prediction performance. For the SOH prediction of LIBs, a prerequisite of prominent performance is that the long-term dependencies of battery degeneration can be learned. Second, whether the base model is suitable to be transferred to other tasks.
+
+To meet these challenges, we developed the two corresponding module components: LSTM layer and two FC layers.
+
+When we employed the LSTM toward SOH estimation, a typical dataset is given by \(D=\{(x_{1}\), \(\text{SOH}_{1}^{\text{+}})\), \((x_{2}\), \(\text{SOH}_{2}^{\text{+}}),\ldots\), \((x_{t}\), \(\text{SOH}_{t}^{\text{+}})\}\), where \(\text{SOH}_{t}^{\text{+}}\) and \(x_{t}\) are the ground-truth value and the input feature vector at cycle number step \(t\), respectively. The LSTM is composed of a series of recurrent neurons, schematically shown in Fig. 3. The superiority of the LSTM is its ability to store long-term dependencies by setting "gate" to determine whether to forget or write new information, which is activated by current input \(x_{t}\) and output \(h_{t-1}\)from the previous cell.
+
+_Forget gate:_ First, the LSTM sets a forget gate to determine what data should be discarded from the current cell, shown as follows:
+
+\[f_{t}=\sigma\left(W_{xf}x_{t}+W_{hf}h_{t-1}+b_{f}\right). \tag{3}\]
+
+The forget gate is activated by sigmoid function \(\sigma\). In this section, the indication of \(W\) and \(b\) is similar, e.g., \(W_{xf}\) represents the weight of _x-f_, and \(b_{f}\) is the bias of \(f\).
+
+_Input gate:_ Then, the input gate is set to determine what new information can be updated. First, a sigmoid layer \(\Phi_{t}\) determines the added information. Then, a tanh layer generates a vector to store candidate state \(\varphi_{t}\) of the current cell
+
+\[\phi_{t}=\sigma(W_{\text{X}\phi}x_{t}+W_{h\phi}h_{t-1}+b_{\phi}) \tag{4}\] \[\varphi_{t}=\tanh(W_{\text{X}\varphi}x_{t}+W_{h\varphi}h_{t-1}+b_ {\varphi}). \tag{5}\]
+
+Based on the above gates, the previous internal state \(C_{t-1}\) can be updated into the current state \(C_{t}\), shown as follows:
+
+\[C_{t}=f_{t}C_{t-1}+\varphi_{t}\phi_{t}. \tag{6}\]
+
+_Output gate:_ Finally, the output value of the LSTM is obtained by a sigmoid layer \(\Psi_{t}\) and a tanh layer \(h_{t}\), shown as follows:
+
+\[\Psi_{t}=\sigma(W_{\text{X}\Psi}X_{t}+W_{h\Psi}h_{t-1}+b_{\Psi}) \tag{7}\]
+
+\[h_{t}=\Psi_{t}\mathrm{tanh}(C_{t}). \tag{8}\]
+
+For different LIBs, the battery degradation processes are with proprietary characteristics. Zhang _et al._[26] reported that adding FC layers for a base model could serve as the "firewall" for the transfer learning of the target domain, which is essential for outstanding transferring performance, especially for source and target domains with large differences. Hence, we designed two FC layers for the base model to learn the private properties of different LIBs. Fig. 4 presents the architecture of LSTM-FC. Then, the final predicted SOH at step \(t\) can be expressed as follows:
+
+\[\mathrm{SOH}_{\mathrm{predicted}}^{t}=W_{12}(W_{h1}h_{t}+b_{1})+b_{2} \tag{9}\]
+
+where 1 and 2 represent the first and the second FC layers, respectively.
+
+### Proposed SOH Prediction Method Based on Transfer Learning
+
+In terms of SOH prediction of LIBs, less training data means the prediction model could predict SOHs for more phases. For the users, the SOHs of LIBs during training phases are unpredictable, so unreasonable operations may occur more frequently. However, the existing popular prediction approaches based on deep learning heavily rely on substantial training data, which inevitably leads to limited application.
+
+Transfer learning could share the knowledge learned with another related task, which avoids "training from scratch" to learn for new tasks. The information from the source domain could be utilized by the target domains, which could reduce the need for mass training data. For multiple different SOH prediction tasks, in spite of local degradation difference, battery degradation always similarly depends on long-term changes of key information. Therefore, to cope with dual challenges
+
+Fig. 4: Network architecture of LSTM-FC. During transfer learning, the LSTM was frozen as shared hidden layer, but the FC layers were set to be adjustable to learn private properties for different LIBs.
+
+Fig. 3: Network architecture of the LSTM [25].
+
+of small training sets and superior prediction accuracy, we proposed a novel SOH prediction method for LIBs based on transfer learning with LSTM network. Here, the LSTM could learn the similar properties of long-term dependencies.
+
+Traditional transfer learning typically trains the base model using the task with mass data. Differently, we implemented transfer learning only based on prediction tasks with small sample size, whether in the training phase of the base model or the transferring phase. The proposed SOH prediction method is detailed in Fig. 5, which is roughly divided into three parts: (1) calculating the FES scores of all prediction tasks; (2) training the base model; and (3) transfer learning.
+
+1. For multiple battery datasets with voltage data of CC charging, we extracted the geometric features that can effectively reflect SOH according to Section II-C. Then, the GRA grade \(r\) between the feature and SOH was calculated. Finally, based on the FES rule, the FES score for each task could be obtained.
+2. Select the task \(\tilde{D}\) with highest FES score as the best representative task \(\tilde{D}\) to train the base model, where the first 40% of the dataset was used for training and the remaining 60% for testing. If the \(\overline{D}\) is not unique, then select the \(\tilde{D}\) with the max \(\sum_{l}r_{l}(r>0.9)\) as \(\tilde{D}\). Note that too many training sets may result in that the base model overlearns private attributes of the source task. An appropriate training ratio is critical for superior generalization performance of the base model.
+3. For a task, judge whether its FES score is greater than 12. If it were, the FC layers of the based model would be fine-tuned during transfer learning. Otherwise, the FC layers would be rebuilt to learn more differences between the target and the source tasks. In the transferring process, only the first 25% of the dataset was employed to train the transfer model.
+
+## IV Experimental Results and Analysis
+
+All experiments were carried on a Lenovo ThinkCentre M8500t computer equipped with Intel Xeon W-2123 (3.60 GHz) CPU, 32-GB RAM, and Microsoft Windows 10 ultimate operating system. The prediction models were built by Keras 2.1.5 upon Tensorflow 1.2.1 backend in Python 3.6.
+
+Root mean squared error (RMSE) and standard deviation of error (SDE) were utilized as the performance evaluation metrics.
+
+\[\mathrm{RMSE}=\frac{1}{m}\sum_{i=1}^{m}\sqrt{\frac{1}{n}\sum\nolimits_{j=1}^{n }\left(\mathrm{SOH}_{\mathrm{actual}}^{j}-\mathrm{SOH}_{\mathrm{predicted}}^{ j}\right)^{2}} \tag{10}\]
+
+\[\mathrm{SDE}=\frac{1}{m}\sum_{i=1}^{m}\sqrt{\frac{1}{n}\sum\nolimits_{j=1}^{n }\left(\mathrm{Error}_{j}-\overline{\mathrm{Error}_{i}}\right)^{2}} \tag{11}\]
+
+where \(\mathrm{SOH}_{\mathrm{actual}}\) and \(\mathrm{SOH}_{\mathrm{predicted}}\) are the desired and predicted value, respectively. \(\mathrm{Error}=\mathrm{SOH}_{\mathrm{predicted}}-\mathrm{SOH}_{\mathrm{actual}}\), and \(\mathrm{Error}\) is the average value of Error. \(m\) = 20 is the number of experiments, and \(n\) is the sample size. To verify the state of the art of the proposed SOH prediction method based on transfer learning, we compared the transfer model LSTM-FC-TL with LSTM-FC, deep neural networks (DNN), SVR [7], GMDH [12], and GPR [14] on different datasets, with the same ratio for training and testing and the same model parameters as possible. In this section, the average values of 20 experiments were exhibited to ensure the reliability of the presented experimental results.
+
+### _Performance of LSTM-FC on B7 Dataset_
+
+Based on the FES rule, the B7 prediction task was utilized to train the base model. The LSTM-FC was constructed with one input layer that fed into a shared LSTM hidden layer with 80 neurons, and then fed into FC layer with 20 neurons. To obtain final predicted SOHs, they were finally fed into the output FC layer with one neuron. The batch size and epoch of the LSTM-FC were set to 5 and 300, respectively. As a predominant optimizer, the adaptive moment estimation was adopted to improve the performance of the LSTM-FC.
+
+Fig. 6 shows the SOH prediction results and errors. It could be found the predicted SOH curve is always close to the actual SOH
+
+Fig. 5: Flowchart of the proposed SOH prediction method for LIBs based on transfer learning. The LSTM-FC is the base model, and LSTM-FC-TL denotes the transferred base model.
+
+Fig. 6: SOH prediction performance of LSTM-FC on B7 dataset.
+
+[MISSING_PAGE_FAIL:7]
+
+RMSE\({}_{\text{cs35}}=0.0052\) is the lowest. Noteworthily, the FES scores of CS37 and CS38 are the same (FES\({}_{\text{cs37}}=\text{FES}_{\text{cs38}}\)), and their RMSE are almost identical (RMSE\({}_{\text{cs37}}=0.0075\) and RMSE\({}_{\text{cs38}}=0.0073\)). Besides, the RMSE\({}_{\text{cs36}}=0.0104\) is the worst one for CALCE, and the FES\({}_{\text{cs36}}=14\) is also the lowest one for CALCE. The experimental results demonstrate the validity of the FES rule for CACLE datasets. Compared to other neural network methods (LSTM-FC, DNN, and GMDH), the LSTM-FC-TL achieves optimal stability with the lowest SDE.
+
+### Efficiency Comparison
+
+Table VIII presents the comparison of processing time. It could be observed that the processing efficiency of the transfer learning has increased by about 35% for B5 prediction task, and about 43% for CALCE prediction tasks, compared to the LSTM-FC. Even if for B6 task with rebuilding the FC layers, the efficiency is still improved by 10% than the base model. Compared with the base model, the processing efficiency of transfer learning is significantly improved, and the efficiency improvement is more significant with the increasing of samples. This is reasonable because the LSTM was frozen during transfering phases so that the transfer model is with low computational complexity.
+
+## V Conclusion
+
+A novel battery SOH prediction method using transfer learning with LSTM network was proposed in this article. The main contributions of this article were as follows: (1) For multiple battery SOH prediction tasks with different sample sizes, the FES rule was developed as a new assessment indicator of correlation and assisted in performing transfer learning successfully. Specifically, the prediction task with highest FES score was selected to train the base model, which could learn the best commonality of multiple tasks, so that the base model could be with superior generalization performance during transfer learning. Besides, we also implemented different transfer strategies for different tasks based on FES scores.
+The experimental results demonstrated the efficiency of the proposed method. (2) Applied transfer learning to achieve accurate, quick, and steady SOH prediction, only based on the first 25% battery dataset for training the transfer model, which significantly improved the practicability of the prediction model, compared to traditional prediction methods. (3) Reported that the voltage curve in the CC charging mode could provide robust features for SOH estimation. Our feature extraction method required no knowledge of battery parameters or battery modeling, which was convenient for practical operations.
+
+In summary, the proposed transfer learning method was of great significance for the practical application of SOH prediction for LIBs. Different from traditional transfer learning, the proposed SOH prediction method was effective for related tasks with small sizes of battery datasets. However, the shortcoming of the proposed method was that both the transfer model and
+
+Fig. 8: Performance comparison of LSTM-FC and LSTM-FC-TL on CALCE dataset.
+
+the base model must be built on the prediction tasks with the same charging process. It might not be suitable for other types of batteries due to the different CC charging curves. Therefore, the feature extraction process might need to be changed based on different battery categories. Besides, the prediction tasks' charging processes of the transfer learning and the base model were consistent in this article, which might limit the application of the proposed methods. In the future, we will study transfer learning methods for lithium batteries with different charging types. Furthermore, it is also a concern for us to provide more accurate and faster SOH estimation methods with a less computational cost.
+
+## References
+
+* [1] C. H. Weng, J. Sun, and H. Peng, "A unified open-circuit-voltage model of lithium-ion batteries for state-of-charge estimation and state-of-health monitoring," _J. Power Sources_, vol. 258, pp. 228-237, 2014, doi: 10.1016/j.jpowowow.2014.02.02.026.
+* [2] S. N. Kong, C. S. Moo, Y. P. Chen, and Y. C. Chen, "Enhanced Coulomb counting method for estimating state-of-charge and state-of-health of lithium-ion batteries," _Appl. Energy_, vol. 86, no. 9, pp. 1506-1511, 2009, doi: 10.1016/j.apenergy.2008.11.021.
+* [3] Y. Hu, J. Jiang, D. Cao, and B. Egardt, "Battery health prognosis for electric vehicles using sample entropy and sparse Bayesian predictive modeling," _IEEE. Trans. Ind. Electron._, vol. 63, no. 4, pp. 2645-2656, Apr. 2016.
+* [4] A. Guha and A. Patra, "State of health estimation of lithium-ion batteries using capacity fade and internal resistance growth models," _IEEE Trans. Trans. Electriftc_, vol. 4, no. 1, pp. 135-146, Mar. 2018.
+* [5] I. Kim, "A technique for estimating the state of health of lithium batteries through a dual-sliding-mode observer," _IEEE. Trans. Power Electron._, vol. 25, no. 4, pp. 1013-1022, Apr. 2010.
+* [6] J. Wei, G. Dong, and Z. Chen, "Lyapunov-based state of charge diagnosis and health prognosis for lithium-ion batteries," _J. Power Sources_, vol. 397, pp. 352-360, Jul. 2018, doi: 10.1016/j.jpowow.2018.07.024.
+* [7] J. Wei, G. Dong, and Z. Chen, "Remaining useful life prediction and state of health diagnosis for lithium-ion batteries using particle filter and support vector regression," _IEEE Trans. Ind. Electron._, vol. 65, no. 7, pp. 5634-5643, Jul. 2018.
+* [8] G. Dong, Z. Chen, J. Wei, and Q. Ling, "Battery health prognosis using Brownian motion modeling and particle filtering," _IEEE Trans. Ind. Electron._, vol. 65, no. 11, pp. 8646-8655, Nov. 2018.
+* [9] R. Xiong, L. Li, and J. Tian, "Towards a smarter battery management system: A critical review on battery state of health monitoring methods," _J. Power Sources_, vol. 405, pp. 18-29, 2018, doi: 10.1016/j.jpowson.2018.01.019.
+* [10] X. Hu, S. Li, and H. Peng, "A comparative study of equivalent circuit models for Li-ion batteries," _J. Power Sources_, vol. 198, pp. 359-367, 2012, doi: 10.1016/j.jpowson.2011.01.013.
+* [11] H.-T. Lin, T.-J. Liang, and S.-M. Chen, "Estimation of battery state of health using probabilistic neural network," _IEEE Trans. Ind. Inform._, vol. 9, no. 2, pp. 679-685, May 2013.
+* [12] J. Wu, Y. Wang, X. Zhang, and Z. Chen, "A novel state of health estimation method of Li-ion battery using group method of data handling," _J. Power Sources_, vol. 327, pp. 457-464, Jul. 2016, doi: 10.1016/j.powson.2016.07.065.
+* [13] H. Dai, G. Zhao, M. Lin, J. Wu, and G. Zheng, "A novel estimation method for the state of health of lithium-ion battery using prior knowledge-based neural network and Markov chain," _IEEE Trans. Ind. Electron._, vol. 66, no.10, pp. 7706-7716, Oct. 2019.
+* [14] D. Yang, X. Zhang, R. Pan, Y. Wang, and Z. Chen, "A novel Gaussian process regression model for state-of-health estimation of lithium-ion battery using charging curve," _J. Power Sources_, vol. 384, pp. 387-395, Mar. 2018, doi: 10.1016/j.jpowson.2018.03.015.
+* [15] G. W. You, S. Park, and D. Oh, "Diagnosis of electric vehicle batteries using recurrent neural networks," _IEEE Trans. Ind. Electron._, vol. 64, no. 6, pp. 4885-4893, Jun. 2017.
+* [16] A. Graves, "Long short-term memory," in _Supervised Sequence Labelling With Recurrent Neural Networks_, vol. 385. Berlin, Germany: Springer, Feb. 2012, ch. 4, pp. 1735-1780.
+* [17] Y. Zhang, R. Xiong, H. He, and M. Pecht, "Long short-term memory recurrent neural network for remaining useful life prediction of lithium-ion batteries," _IEEE Trans. Veh. Technol._, vol. 67, no. 7, pp. 5695-5705, Jul. 2018.
+* [18] E. Chemali, P. Kollmeyer, M. Preindl, R. Ahmed, and A. Emadi, "Long short-term memory-networks for accurate state of charge estimation of li-ion batteries," _IEEE Trans. Ind. Electron._, vol. 65, no. 8, pp. 6730-6739, Aug. 2018.
+* [19] S. J. Pan and Q. Yang, "A survey on transfer learning" _IEEE Trans. Knowl. Data Eng._, vol. 22, no. 10, pp. 1345-1359, Oct. 2010.
+* [20] L. Ungueraan, G. Carstoiu, M. V. Micea, and V. Groza, "Battery state of health estimation: A structured review of models, methods, and commercial devices," _Int. J. Energy Res._, vol. 41, no. 2, pp. 1-31, 2017, doi: 10.1002/cr.3598.
+* [21] B. Saha and K. Goebel, _Battery Data Set_, Moffett Field, CA, USA: NASA Ames Res. Center, 2007. [Online]. Available: [http://ti.arc.nasa.gov/tech/dash/pcop/proprogsotic-data-repositoryitory](http://ti.arc.nasa.gov/tech/dash/pcop/proprogsotic-data-repositoryitory)
+* [22] W. He, N. Williard, M. Osterman, and M. Pecht, "Prognostics of lithium-ion batteries based on Dempster-Shafer theory and the Bayesian Monte Carlo method," _J. Power Sources_, vol. 196, no. 23, pp. 10314-10321, Aug. 2011, doi: 10.1016/j.jpowson.2011.08.040.
+* [23] Y. Xing, E. W. M. Ma, K. L. Tsui, and M. Pecht, "An ensemble model for predicting the remaining useful performance of lithium-ion batteries," _Microelectron. Rel._, vol. 53, no. 6, pp. 811-820, Jan. 2013, doi: 10.1016/j.microrel.2012.12.003.
+* [24] N. Tosun, "Determination of optimum parameters for multi-performance characteristics in drilling by using grey relational analysis," _Int. J. At. Manol. Technol._, vol. 28, no. 5, pp. 450-455, May 2005, doi: 10.1007/s00170-004-2386-y.
+* [25] Z. C. Lipton, "A critical review of recurrent neural networks for sequence learning," unpublished, 2015. [Online]. Available: [https://arxiv.org/abs/1506.00019](https://arxiv.org/abs/1506.00019)
+* [26] C.-L. Zhang, J.-H. Luo, X.-S. Wei, and J. Wu, "In defense of fully connected layers in visual representation transfer," in _Advances in Multimedia Information Processing_. Cham, Switzerland: Springer, May 2018, pp. 807-817.
+
+\begin{tabular}{c c}  & Yandan Tan received the bachelor's degree in educational technology from Shandong Normal University, Jinan, China, in 2017. She is currently working toward the master's degree in control engineering with the North University of China and the Quanzhou Institute of Equipment Manufacturing, Haak Institutes, Chinese Academy of Sciences, Jinjiang, China. Her research interests include state estimation, fault diagnosis of lithium-ion batteries in electrical vehicles, and biological signal processing. \\ \end{tabular} 
+\begin{tabular}{c c}  & Guangcai Zhao was born in Shandong, China, in August 1993. He received the B.E. degree in automation from the Ocean University of China, Qingdao, China, in 2016. He is currently working toward the master's degree in control engineering with the University of Chinese Academy of Sciences and the Quanzhou Institute of Equipment Manufacturing, Haak Institutes, Chinese Academy of Sciences, Jinjiang, China. His research interests include state estimation and fault diagnosis of lithium-ion batteries in electrical vehicles. \\ \end{tabular}

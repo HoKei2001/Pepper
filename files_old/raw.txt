@@ -1,0 +1,1093 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022 4541
+Revisiting Grid-Forming and Grid-Following
+Inverters: A Duality Theory
+Yitong Li , Member, IEEE , Yunjie Gu , Senior Member, IEEE ,a n dT i m o t h yC .G r e e n , Fellow, IEEE
+Abstract —Power electronic converters for integrating renewable
+energy resources into power systems can be divided into grid-
+forming and grid-following inverters. They possess certain simi-
+larities, but several important differences, which means that the
+relationship between them is quite subtle and sometimes obscure.
+In this article, a new perspective based on duality is proposed
+to create new insights. It successfully uniﬁes the grid interfac-
+ing and synchronization characteristics of the two inverter types
+in a symmetric, elegant, and technology-neutral form. Analysis
+shows that the grid-forming and grid-following inverters are duals
+of each other in several ways including a) synchronization con-
+trollers: frequency droop control and phase-locked loop (PLL); b)
+grid-interfacing characteristics: current-following voltage-forming
+and voltage-following current-forming; c) swing characteristics:
+current-angle swing and voltage-angle swing; d) inner-loop con-
+trollers: output impedance shaping and output admittance shap-
+ing; and e) grid strength compatibility: strong-grid instability and
+weak-grid instability. The swing equations are also derived in
+dual form, which reveal the dynamic interaction between the grid
+strength, the synchronization controllers, and the inner-loop con-
+trollers. Insights are generated into cases of poor stability in both
+small-signal and transient/large-signal. The theoretical analysis
+and simulation results are used to illustrate cases for single-inverter
+systems, two-inverter systems, and multi-inverter networks.
+Index Terms —Duality, synchronization, frequency droop
+control, phase-locked loop (PLL), grid-forming inverter (GFM),
+grid-following inverter (GFL), grid strength.
+I. I NTRODUCTION
+THE imperative to adopt low-carbon energy is bringing
+about connection of large volumes of renewable energy
+resources and other supporting resources (including wind tur-
+bines, solar arrays, battery storage and fuel cells) to power
+systems and these connections are via power electronic invert-
+ers [1]. Compared with synchronous generators which have rotor
+motion dynamics and well-established standard models [2],
+the grid-interfacing and grid-synchronization characteristics of
+Manuscript received 24 June 2021; revised 30 October 2021 and 28 January
+2022; accepted 12 February 2022. Date of publication 16 February 2022;
+date of current version 20 October 2022. This work was supported by the
+Engineering and Physical Sciences Research Council of UK (EPSRC) under
+Awards EP/S000909/1 and EP/T021780/1. Paper no. TPWRS-00996-2021.
+(Corresponding author: Yunjie Gu.)
+Yitong Li and Timothy C. Green are with the Department of Electrical and
+Electronic Engineering, Imperial College, SW72AZ London, U.K. (e-mail:
+yitong.li15@imperial.ac.uk; t.green@imperial.ac.uk).
+Yunjie Gu is with the Department of Electronic and Electrical Engineering,
+University of Bath, BA27AY Bath, U.K. (e-mail: yg934@bath.ac.uk).
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/TPWRS.2022.3151851.
+Digital Object Identiﬁer 10.1109/TPWRS.2022.3151851these inverter-based resources (IBRs) have dynamics set by
+control algorithms of which there are many variants [1], [3], [4].
+The central importance of the control algorithms of inverters
+brings ﬂexibility to the system but with it come new control
+interaction and instability problems.
+Power electronic inverters used for IBRs are normally classi-
+ﬁed into two types, as shown in Fig. 11: (a) grid-forming (GFM);
+and (b) grid-following (GFL). A grid-forming inverter controls
+the ac-side voltage and contributes to forming of a voltage-
+source grid. It synchronizes with the rest of the grid through fre-
+quency droop control (normally P−ωdroop), which is similar
+to the control a synchronous generator[4]–[6]. In contrast, a grid-
+following inverter controls the ac-side current, and follows the
+phase angle of the existing grid voltage through a phase-locked
+loop (PLL) [3], [7]. Grid-following inverters have already been
+widely used for integrating wind and solar energy into power
+grids due to their simple control structure, their mature PLL
+technology, and their feature of operating at a determined current
+(matching the maximum power point or dispatch point of the
+resource). However, the PLL has negative effects on the system
+stability especially when the grid is weak because of a large grid
+impedance [8], [9]. This problem is likely to arise more often
+and become more challenging worldwide as more and more
+synchronous generators are replaced by IBRs. Consequently,
+attention has turned in recent years to grid-forming inverters
+because of their synchronous-generator-like characteristics and
+their capability of operating in a weak grid without stiff voltage
+sources or even of forming a stand-alone grid [4], [6], [10].
+As reviewed in [3], the characteristics of grid-forming and
+grid-following inverters are signiﬁcantly different and they are
+seen as distinct types of inverter with their own analysis tools
+and underpinning theory. However, intriguing similarities have
+also been reported in literature by researchers who have at-
+tempted to unify them. For example, [11]–[13] observed the
+structural resemblance between the frequency droop control of
+a grid-forming inverter (or a synchronous generator) and the
+PLL of a grid-following inverter when the grid impedance is
+taken into account. Additionally, note that the PLL that was
+investigated in [13] had been enhanced and is different from the
+widely-used fundamental PLL in [7]. In [14], the small-signal
+power-frequency relation of a grid-following inverter was de-
+rived, but by merging the PLL with the dc-link voltage control
+1In order to highlight the duality relationships and to facilitate comparison,
+the ﬁgures and tables in this paper are always arranged with the frequency droop
+grid-forming inverter case on the left and the PLL grid-following inverter case
+on the right.
+0885-8950 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. 4542 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+Fig. 1. Inverters and their control structures in synchronous dqframe. (a) Grid-forming inverter with frequency droop control. (b) Grid-following inverter with
+PLL. (Note that the superscript∗indicates the reference signal in this article.).
+Fig. 2. Synchronization loops. (a) Frequency droop control for grid-forming inverter. (b) Synchronous-reference-frame PLL for grid-following in verter.
+Fig. 3. Synchronization loops for single-inverter-inﬁnite-bus systems. (a) Frequency droop grid-forming inverter. (b) PLL grid-following inver ter.
+to perform the analysis. These results are inspiring indeed, but
+are not yet symmetrical or as elegant as they might be because
+of two straightforward obstacles [3]: (a) a grid-forming inverter
+controls its ac-side voltage, but a grid-following inverter controls
+its ac-side current; (b) the frequency droop control establishes
+a relationship between frequency and active power, but a PLL
+establishes a relationship between frequency and grid voltage.
+These two differences have left the uniﬁcation of two inverter
+types still an open question and has also obscured the relation-
+ship between.
+In this article, a new perspective is developed that re-
+veals a duality in the relationship between the two inverter
+types in a technology-neutral form and provides an elegant
+framework to analyze them. The analysis will show that the
+frequency-droop control and the PLL of two inverter types
+are essentially duals of each other. Further, the grid-formingand grid-following inverters can also be re-classiﬁed more
+precisely as current-following voltage-forming inverter and
+voltage-following current-forming inverter , respectively. By de-
+riving and analyzing the swing characteristics, the synchroniza-
+tion mechanisms and grid-interfacing dynamics of the two types
+can also be re-deﬁned as current-angle swing andvoltage-angle
+swing , respectively. Based on the proposed duality theory, some
+questions and controversies that have concerned the power engi-
+neering community in recent times can be answered intuitively
+and convincingly. The questions include: a) How can the re-
+lationship between grid-forming and grid-following be under-
+stood? b) How do the controllers (e.g., droop control, PLL, and
+voltage or current loops) interact with each other? c) Is a grid-
+forming inverter also vulnerable to certain grid strength condi-
+tions just as a grid-following inverter is vulnerable to weak grids?
+d) Can a grid-following inverter also operate in islanding mode,
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. LIet al. : REVISITING GRID-FORMING AND GRID-FOLLOWING INVERTERS: A DUALITY THEORY 4543
+TABLE I
+DUALITY OF GIRD-FORMING AND GRID-FOLLOWING INVERTERS
+like a grid-forming inverter? e) How to analyze the transient
+stability of grid-forming and grid-following inverters? Beyond
+answering these questions, the duality theory has the potential of
+inspiring new concepts and interpreting surprising phenomena,
+and providing fresh insights in power systems dominated by
+IBRs.
+This article is organized as follows: Section II proposes a
+duality approach and elaborates it in various aspects. In Sec-
+tion III and Section IV, comprehensive analysis of swing char-
+acteristics reveals the duality of the synchronization stability of
+grid-forming and grid-following inverters in both small-signal
+and large-signal. Case studies are also investigated. Finally,
+Section V concludes the article.
+II. D UALITY OF GRID-FORMING AND GRID-FOLLOWING
+INVERTERS
+A. Duality of Synchronization Loops
+The synchronization functions of inverters are highlighted
+in red in Fig. 1, namely a frequency droop block for the grid-
+forming inverter and a PLL for the grid-following inverter. The
+control block diagram format for these two synchronization
+methods is illustrated in Fig. 22.
+Examining ﬁrst the droop control of a grid-forming inverter in
+(a1) in Fig. 2(a), we recall that P=vdid+vqiq, and note that, if
+vdis constant and vqis zero,P-ωdroop in (a1) is equivalent to id-
+ωdroop in (a2). This is valid within the voltage-loop bandwidth
+of the grid-forming inverter and with a zero reference for q-
+axis voltage. The droop controller GFDnormally has the form
+m1
+1+sTfwheremis the droop gain and1
+1+sTfis a low-pass
+ﬁlter (LPF) which attenuates high-frequency noise. As will be
+discussed in Section III and as noted in [4], [5], this LPF alsoprovides virtual inertia. For the grid-following inverter, (b2) in
+Fig. 2(b) shows the widely-used synchronous-reference-frame
+PLL. The PLL measures the voltage phase angle by controlling
+vqto zero through a proportional-integral (PI) controller GPLL
+=kp,PLL+ki,PLL
+s. Recalling that reactive power is given by Q
+=vqid−vdiqwe note that vqis also proportional to Qwhenid
+is constant and iqis zero. This is valid within the current loop
+bandwidth (with a reference of zero for q-axis current). In other
+words, the vq-PLL in (b2) is equivalent to Q-PLL in (b1).
+By comparing Fig. 2(a) and (b) carefully, the duality can be
+identiﬁed. Speciﬁcally, a power-frequency droop is also a id-ω
+droop that can be regarded as a PLL that tracks id.T h i sid-PLL
+has a phase-locking controller GFDthat is a proportional (droop)
+gain rather than a PI controller and hence steady-state tracking
+error is expected. As a dual, a PLL that tracks vqcan also be
+regarded as a vq-ωdroop control. Its controller GPLLis a PI droop
+gain without steady-state droop errors. In summary, and when
+putting aside the difference between GFDandGPLL,t h et w o
+synchronization methods are perfectly duals of each other: one
+tracks (or droops) idorPwhereas the other tracks (or droops)
+vqorQ, as summarized in Table I. This duality view of the
+two synchronization methods drives rethinking the grid-forming
+and grid-following concepts that is expounded in the following
+subsections.
+B. Duality of Grid-Forming and Grid-Following
+A very important point that is so common and often over-
+looked is recalled here: power grids nowadays are voltage
+2The current ﬂowing into the inverter is assumed as the positive direction
+(i.e., load/passive convention) in this article, except for Section IV-B which uses
+source/active convention for transient analysis of two-inverter swing interaction.
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. 4544 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+Fig. 4. Modeling single-inverter-inﬁnite-bus systems in dq±frame. (a) Frequency droop grid-forming inverter. (b) PLL grid-following inverter. (Notes: These
+models are small-signal, and in complex dqframe.Gsis the synchronization controller. Tis the transformation matrix from d/primeq/prime±frame todq±frame.).
+sources by default and the connections of sources and loads
+are made in parallel. This choice has been driven by efﬁciency
+and power quality considerations [15]. In other words, the grid-
+forming and grid-following are more precisely voltage-forming
+and voltage-following. Additionally, the id-ωdroop (id-PLL)
+of the grid-forming inverter implies that it is current-following;
+and the current control of the grid-following inverter implies that
+it is current-forming. Hence, a frequency droop grid-forming
+inverter can be re-deﬁned more precisely as a current-following,
+voltage-forming inverter and, as a dual, a PLL grid-following
+inverter can also be re-deﬁned more precisely as a voltage-
+following, current-forming inverter . In other words, the grid-
+interfacing features of two inverters are also perfectly duals in a
+technology-neutral form, as summarized in Table I.
+C. Duality of Swing Characteristics
+It has been established that the frequency droop grid-forming
+inverter operates similarly (or in certain cases equivalently)
+to a virtual synchronous generator and synchronizes to a grid
+system through swing dynamics [4], [5]. By contrast, the swing
+of a PLL grid-following inverter is still ill-deﬁned and under-
+researched [11], [14]. The swing characteristics of both inverters
+are derived in the next passage and further aspects of their duality
+are revealed.
+1) Frequency Droop Grid-Forming Inverter: The single-
+machine-inﬁnite-bus system is a useful simple case to inves-
+tigate the swing dynamics [2], [4]. Fig. 3(a) gives a model of
+the synchronization process similar to Fig. 2(a) but with an
+additional feedback path considering grid impedance Zgand
+inverter impedance Zc. The representation of the inverter as a
+controlled voltage source reﬂects the current-following voltage-
+forming feature and the synchronization loop. Impedance Zc
+incorporates the dynamics of the ac ﬁlter and of the inner voltage
+loop of the converter [4]. Fig. 4(a) is a re-casting of the model
+in small-signal form (for which variables are designated with ˆ)
+and in the complex vector dqframe (variables designated with
+dq±) [4], [16], [17]3.
+The physical plant, the grid and inverter are represented in
+the steady frame ( d/primeq/prime±) rotating at constant speed Ω0whereas
+3We use complex dqframe (dq±frame) for the small-signal analysis in
+this article, which represents dqframe variables as space vectors and has
+more concise expression. The fundamentals of dq±frame are summarized in
+Appendix A.
+Fig. 5. Inverter frame illustration. (Notes: ωandθare the large-signal angular
+frequency and phase angle respectively, with small-signal ˆωandˆθand steady-
+state operating points Ω0andΘ0.).
+the synchronization loop and voltage reference are represented
+in the local swing frame ( dq±) rotating at frequency ωgiven
+by the frequency droop control. The relationship between the
+steady and swing frames is illustrated in Fig. 5 [18].4The
+frame transformation [T]betweendq±andd/primeq/prime±reﬂects the
+synchronization dynamics [18], [19].
+Fig. 6 shows in the left-hand column the key steps in modelling
+thecurrent-angle swing dynamics of a grid-forming inverter.
+(a1) is the frequency droop equation and (a2) is linearized
+from using dq±variables. These equations show the swing
+relationship between the current and synchronization angle.
+Later, in Section III-D, the impedance method will be used to
+facilitate the analysis of multi-inverter cases and so the swing
+equation is developed in impedance form using the frame-
+dynamics-embedding method [18], [19]. Starting with (a2) and
+Fig. 4(a), we can obtain the frequency droop virtual impedance
+ZFDof (a3), where Siθis the current-angle swing characteristic
+equation of (a4). A whole-system model that considers both
+the inverter and the inﬁnite bus is then created in (a5) which
+uses the modiﬁed swing characteristic equation S/prime
+iθof (a6). The
+modiﬁed swing characteristic captures the interaction between
+the synchronization loop, the inner voltage loop, and external
+grid impedance. The representation of the voltage-loop Zccan
+be found in literature [4]. Further analysis of SiθandS/prime
+iθwill be
+given in Section III.
+2) PLL Grid-Following Inverter: The synchronization loop
+including grid feedback is shown in Fig. 3(b) and its small-signal
+4The swing frame and steady frames are also known as controller frame
+and system frame respectively in [8], and also known as mechanical frame and
+electrical frame respectively in [19].
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. LIet al. : REVISITING GRID-FORMING AND GRID-FOLLOWING INVERTERS: A DUALITY THEORY 4545
+Fig. 6. Characteristic equations. (a) Frequency droop grid-forming inverter. (b) PLL grid-following inverter. (Notes: sis the Laplace operator. I[2×2]is the2×2
+identity matrix. The linearization law includes ω=ˆω+Ω 0,θ=ˆθ+Θ 0,v=ˆv+V0,a n di=ˆi+I0.).
+Fig. 7. Transformation between voltage-type and current-type inﬁnite buses.
+model in complex dqform is shown in Fig. 4(b). The grid-
+following inverter is repented by a controlled current source
+which reﬂects the voltage-following current-forming feature.
+The admittance Ycrepresents the dynamics of the ac ﬁlter and
+the inner current loop [4]. To highlight the duality between
+grid-forming and grid-following inverters, the inﬁnite bus is
+represented by a current source with parallel admittance Yghere.
+This is equivalent to a voltage-type inﬁnite bus according to the
+Thevenin’s and Norton’s theorems, as illustrated in Fig. 7.
+The right-hand column in Fig. 6 sets out the swing equa-
+tion of a PLL grid-following inverter. (b1) is the PLL swing
+equation and the linearized form is given in (b2). The duality
+between inverter types is seen in the grid-forming inverter having
+current-angle swing characteristics whereas the grid-following
+inverter has voltage-angle swing characteristics.Following similar steps as for the frequency droop grid-
+forming inverter, the frame-dynamics-embedding method
+in [18], [19] is used to form a virtual admittance YPLLrepresen-
+tation of the PLL of (b3) with the voltage-angle swing character-
+istic equation Svθin (b4). The whole-system model in (b5) can
+then be obtained, in which the current-loop virtual admittance
+Yccan be found in [4]. S/prime
+vθis the swing characteristic deﬁned
+in (b6) which incorporates gird interaction. Further analysis of
+SvθandS/prime
+vθwill also be given in Section III, alongside that for
+the grid-forming inverter.
+Summarising Fig. 6, the grid-forming inverter has current-
+angle swing characteristics (equivalent to P-angle swing within
+its voltage loop bandwidth when vqis constant and vqis zero)
+whereas, as a dual, the grid-following inverter has voltage-angle
+swing characteristics (equivalent to Q-angle swing when idis
+constant and iqis zero).
+D. Summary of Duality
+In this section, grid-forming and grid-following inverters have
+been discussed in terms of synchronization loops, the forming
+or following of voltage and current, and the swing dynamics.
+The discussion has applied the same perspective to each type
+and shown that in many regards, the two types have duality
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. 4546 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+characteristics, as summarized in Table I. In next section, the
+analysis will be extended to stability of the synchronization to
+explore the duality further.
+III. D UALITY OF SMALL -SIGNAL STABILITY
+In this section, the small-signal swing characteristics in Fig. 6
+will be further analyzed, to explore the duality from the perspec-
+tive of stability. Case-study networks will be used to illustrate
+the points. The parameters used for obtaining theoretical and
+simulation results in this section are summarized in Appendix B.
+A. Synchronization Loops With Ideal Sources: SiθandSvθ
+The synchronization loops illustrated in Fig. 2(a) and (b) are
+investigated ﬁrst for the simple case where the current vector
+detected by the frequency droop and the voltage vector detected
+by the PLL are steady vectors rotating with a constant angular
+frequency. In other words, the grid-forming inverter is required
+to synchronize to an ideal current source and the grid-following
+inverter to an ideal voltage source, without inner-loop dynam-
+ics and grid impedance. The synchronization dynamics are as
+described by SiθandSvθin (a4) and (b4) in Fig. 6. It is worth
+remarking that Siθcan also be derived directly by linearizing
+the frequency droop equation noting that ˆid=Iq0ˆθ; andSvθ
+can be derived directly by linearizing the PLL equation noting
+thatˆvq=−Vd0ˆθ.
+TakingGFDas a droop gain with an LPF ( m1
+1+Tfs) andGPLL
+as a PI controller ( kp,PLL+ki,PLL
+s),SiθandSvθcan be written
+as
+Siθ=s2Tf
+m/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+J+s1
+m/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+KD+(−Iq0)/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+KS(1)
+and
+Svθ=1
+1+skp,PLL
+ki,PLL/parenleftbigg
+s21
+ki,PLL/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+J+skp,PLL
+ki,PLLVd0
+/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+KD+Vd0/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+KS/parenrightbigg
+(2)
+The forms of SiθandSvθare not perfectly duals here because of
+the difference between controllers GFDandGPLL, but, notwith-
+standing that, both SiθandSvθhave characteristics similarly to
+a virtual synchronous generator with inertia J, damping torque
+coefﬁcient KD, and synchronizing torque coefﬁcient KSas
+identiﬁed in the equations. In particular, the time-constant of
+the LPF in GFDand the integral gain of the PI controller in GPLL
+contribute the virtual inertia J.
+Unlike this simple case, the current and voltage vectors mea-
+sured by frequency droop and PLL are not constant in practice,
+and further analysis of SiθandSvθis needed next.
+B. Single-Inverter-Inﬁnite-Bus Systems: S/prime
+iθandS/prime
+vθ
+For single-inverter-inﬁnite-bus systems (Fig. 3 and Fig. 4)
+the current and voltage at the connection point to the inverters
+synchronize are not constant, and instead are subject to interac-
+tions between the grid impedance/admittance ( ZgandYg), the
+synchronization controllers ( ZFDandYPLL), and the inner-loop
+Fig. 8. Illustration of synchronization stability with variation of grid
+impedance. (a) Root loci of S/prime
+iθfor grid-forming with Zgdecreased from
+0.3(1/5+j)pu to0.1(1/5+j)pu. (b) Root loci of S/prime
+vθfor grid-following
+withZgincreased from 0.4(1/5+j)pu to0.6(1/5+j)pu. (c) Simulation of
+grid-forming as Zgis reduced at 0.2 s and changed back at 0.4 s. (d) Simulation
+of grid-following as Zgis increased at 0.2 s and changed back at 0.4 s.
+Fig. 9. Illustration of synchronization stability with variation of synchroniza-
+tion controller gains. (a) Root loci of S/prime
+iθfor grid-forming with droop gain
+mincreased from 0.05 pu to 0.2 pu. (b) Root loci of S/prime
+vθfor grid-following
+with PLL bandwidth ωPLLincreased from 15 Hz to 60 Hz. (c) Simulation of
+grid-forming as mis increased at 0.2 s and changed back at 0.4 s; (d) Simulation
+of grid-following as ωPLLis increased at 0.2 s and changed back at 0.4 s.
+controllers ( ZcandYc). The swing characteristics SiθandSvθ
+are modiﬁed to S/prime
+iθandS/prime
+vθthrough the introduction of interac-
+tion terms (ZFD+Zc)Z−1
+gand(YPLL+Yc)Y−1
+grespectively.
+To explore the factors that inﬂuence the stability of the syn-
+chronization of both forms of inverter, the root loci of S/prime
+iθand
+S/prime
+vθare plotted as three parameters are varied: grid impedance
+in Fig. 8, synchronization gain in Fig. 9, and inner-loop gain in
+Fig. 10. In each case, sub-ﬁgures (a) and (c) are for frequency
+droop grid-forming and sub-ﬁgures (b) and (d) for PLL grid-
+following.
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. LIet al. : REVISITING GRID-FORMING AND GRID-FOLLOWING INVERTERS: A DUALITY THEORY 4547
+Fig. 10. Illustration of synchronization stability with variation of inner-loop
+controller gains. (a) Root loci of S/prime
+iθfor grid-forming with voltage control
+bandwidth index ωvreduced from 250 Hz to 150 Hz. (b) Root loci of S/prime
+vθfor
+grid-following with current control bandwidth index ωidecreased from 250 Hz
+to 150 Hz. (c) Simulation of grid-forming as ωvis reduced at 0.2 s and changed
+back at 0.4 s. (d) Simulation of grid-following as ωiis reduced at 0.2 s and
+changed back at 0.4 s.
+Fig. 8 shows that reducing Zgfor the grid-forming inverter
+and reducing Ygfor the grid-following inverter lead to the
+right-half plane roots and instability. In other words, a grid-
+following inverter is vulnerable to weak grid with low Yg, which
+agrees with the consensus in the literature [8], [9]. As a dual,
+a grid-forming inverter is vulnerable to strong grid with low
+Zg. This observation is somewhat surprising at the ﬁrst glance
+and has rarely been reported in literature [3], [6], but follows
+from the duality that has been established. It also warns that
+the grid-forming inverter is not always a good choice. Addition-
+ally, it is also worth mentioning that the grid-forming inverter
+investigated here uses double-loop control (an inner current
+loop and an outer voltage loop) for voltage forming and droop
+control (active power frequency droop) for synchronization [4].
+There are alternative control options available, such as open-loop
+voltage control, single-loop voltage control, virtual synchronous
+generator control, and virtual impedance control. The effect of
+grid strength on their stability may be different and will require
+further study before a general conclusion can be formed. It is
+also worth noting that some of the available control methods
+have been shown to be equivalent [4], [5], [20].
+Fig. 9 shows that increasing the droop gain mof the grid-
+forming inverter (i.e., increasing GFDandZFD) and increasing
+the PLL bandwidth ωPLLof the grid-following inverter (i.e.,
+increasing GPLLandYPLL) lead to the instability. In other words,
+the larger of synchronization controller gains, the more prone
+inverters become to instability.
+Fig. 10 shows that reducing the voltage loop bandwidth of
+the grid-forming inverter (i.e., increasing Zc[4]) and reducing
+the current loop bandwidth of the grid-following inverter (i.e.,
+increasing Yc[4]) lead to the instability. In other words, the lowerthe inner-loop bandwidth, the greater the chance of unstable
+interaction.
+Sub-ﬁgures (c) and (d) in Fig. 8, Fig. 9 and Fig. 10 show
+time-domain simulation results which conﬁrm the theoretical
+analysis in (a) and (b). At 0.2 s, parameters are tuned in the
+direction the root loci indicate which leads to the instability.
+The oscillations are observed to be at the frequencies predicted
+by root loci. At 0.4 s, the parameters are returned to their initial
+values which re-stabilizes the system.
+It is worth observing that the unstable modes discussed in
+this subsection are caused by insufﬁcient damping coefﬁcient
+(or damping torque) rather than insufﬁcient synchronizing co-
+efﬁcient (or synchronizing torque). Insufﬁcient damping co-
+efﬁcient occurs in a duality fashion: grid-forming with low
+grid impedance; grid-following with high grid impedance. This
+instability can generally able be avoided by tuning controllers
+(as seen in Fig. 9 and Fig. 10) or by changing inner-loop control
+structures [4]. Care is need, though, since there may be additional
+constraints on the controllers in practice which might limit the
+freedom to tune their parameters to enhance the small-signal
+stability. For example, the droop gain of grid-forming inverter
+is limited by the frequency variation limit speciﬁed in a grid
+code; and the inner loop bandwidths of inverters are limited by
+the switching and sampling frequency of the inverter hardware.
+In contrast to duality present in insufﬁcient damping coefﬁcient
+discussed above, insufﬁcient synchronizing coefﬁcient for both
+grid-forming and grid-following inverters occurs when the grid
+is very weak [2], [9], [21]. This case is related to the power
+transfer characteristic between two node voltages separated by
+an impedance. It is accompanied by the well-known limit on
+power transfer capability and is sensitive to the power ﬂow [21].
+Under this condition there would be a direct loss of synchro-
+nization rather than an unstable oscillations. A further type
+of high-frequency instability is known and occurs when the
+bandwidth of the inner loop is too high. This is known as
+harmonic or super-synchronous instability [22] and is distinctly
+different from the interaction instability caused by an inner loop
+that is too slow as in Fig. 10.
+In conclusion, the imperative of stable synchronization of the
+two types of inverters places similar upper limits on synchro-
+nization controller gains and similar lower limits for the inner
+voltage- or current-loop controller gains but duality limits on
+grid strength, namely, a lower limit on the grid impedance for
+grid-forming but an upper limit on grid impedance (or low limit
+on admittance) for grid-following. All these observations point
+to the same conclusion: the larger the interaction terms in S/prime
+iθ
+andS/prime
+vθ, the higher likelihood of instability. A summary of these
+discussions are also included in Table I.
+C. Rethinking Grid Strength
+As discussed in previous subsections, grid strength plays a
+role in inverter stability. In looking again at grid strength with the
+duality principle in mind, a normally overlooked fact is recalled
+that the term “grid” in grid strength is taken to mean a voltage
+grid rather than a current grid. Therefore, we might re-deﬁne
+the conventional grid strength more precisely as grid voltage
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. 4548 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+Fig. 11. Duality of grid strength.
+Fig. 12. A modiﬁed IEEE 14-bus inverter-based power system. (Notes: GFM
+indicates grid-forming, and GFL indicates grid-following).
+strength and, as a dual, also deﬁne the term grid current strength ,
+as illustrated in Fig. 11. Even though any source or bus can be
+represented as either voltage or current type through Thevenin’s
+and Norton’s theorems, the grid nowadays as we know is “closer”
+physically to a voltage source with relatively low equivalent
+series impedance. It has a high voltage strength when Zgis
+small and becomes an ideally strong (or stiff) voltage source
+whenZg=0. As a dual, a grid has a high current strength when
+Ygis small and becomes an ideally strong (or stiff) current source
+whenYg=0. A short circuit can be regarded as an ideal voltage
+source with vg=0andZg=0; and open circuit can be regarded
+as an ideal current source with ig=0 andYg=0.
+This wider interpretation of grid strength also helps to form
+intuitive understanding of the grid strength stability discussed in
+previous subsection. A grid-forming inverter (voltage-forming,
+current-following) is vulnerable to a strong grid and cannot oper-
+ate with short-circuit (voltage-strong, current-weak). As a dual,
+a grid-following inverter (current-forming, voltage-following) is
+vulnerable to a weak grid and cannot operate with open-circuit
+(current-strong, voltage-weak). This is also summarized in Ta-
+ble I.D. A Multi-Inverter Power System
+A network with several IBRs, shown in Fig. 12 is tested next.
+It has the same layout and line impedances as the standard IEEE
+14-bus test network [23], but all the synchronous generators
+have been replaced by either grid-forming inverters (blue) or
+grid-following inverters (red). The whole-system impedance
+model can be readily constructed by connecting the inverter
+impedance model in Fig. 6 to the dynamic nodal admittance
+matrix of transmission lines [18], [19]. System stability can then
+be evaluated by observing the poles of the whole-system model
+in Fig. 13(a). To study a change in grid strength, the impedances
+of linesZ12andZ15, connecting GFM1, are reduced from
+the standard values of 0.019+j0.059 pu and0.054+j0.22
+pu (poles in blue) to one ﬁfth of those values (poles in red).
+This higher voltage strength connections leads to a 17.3 Hz
+unstable oscillation (a strong-grid instability). This is conﬁrmed
+by simulation results in Fig. 13(b). At 0.4 s, Z12andZ15are
+reduced, which leads to the unstable oscillation. At 0.8 s, Z12and
+Z15are increased back to their standard values and the system
+becomes stable again.
+As a dual, increasing the impedances of lines can also lead to
+the weak-grid instability of GFL2 or GFL8, which has been
+widely discussed in literature [8], [9], [14], [19] and is not
+examined further here.
+IV . D UALITY OF TRANSIENT STABILITY
+The analysis thus far (e.g., the characteristic equations in
+Fig. 6 and the interaction analysis in Section III-B) has fo-
+cused on small-signal instability, i.e., instability to perturbations
+around a given operating point. In practice, power grids are
+also required to be robust under abnormal operation (e.g., island
+operation) and severe disturbance (e.g., temporary short-circuit
+fault). This is known as the large-signal stability or transient
+stability. It is known that grid-forming inverters are established
+as a method for island operation with a formed grid voltage,
+duality can be used to operate an island with a formed grid
+current by grid-following inverters. Additionally, the transient
+stability of both grid-forming and -following inverters can be
+assessed in a similar manner to synchronous generators [2] with
+the virtual inertia and virtual damping being considered in place
+of physical inertia and damping torque. These two aspects of
+duality will now be discussed.
+A. Single-Inverter System: Island Operation and Frequency
+Stability
+The ability of grid-forming inverters to operate in electrical
+islands has been widely known for some time [4], [10]. In
+contrast, the ability of a grid-following inverter to do the same
+is controversial [9] because of the stereotype of “following”.
+As discussed in Section II-B, the grid-following inverter is
+more precisely a voltage-following current-forming inverter, and
+hence, it could form an island grid (current rather than voltage).
+To test this idea, a PLL grid-following inverter is simulated with
+a passive RLload (1+j0.2pu) in islanding mode. The system
+layout is shown in Fig. 14(a). The result in Fig. 15, shows that
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. LIet al. : REVISITING GRID-FORMING AND GRID-FOLLOWING INVERTERS: A DUALITY THEORY 4549
+Fig. 13. (a) Pole loci of the whole-system with the standard line impedances (blue) and with Z12andZ15reduced to one ﬁfth (red). (b) Simulation results for
+frequency, current and voltage at the ﬁve IBR buses. Z12andZ15are reduced at 0.4 s and revert at 0.8 s.
+Fig. 14. System layout of the island operation of grid-following inverters. (a)
+Single-inverter case. (b) Two-inverter case.
+Fig. 15. Test results for the island operation of a grid-following inverter. i∗
+qis
+changed from 0.09 pu to 0 pu at 0.4 s and ki,PLLis changed from its nominal
+value to 0 at 0.8 s.
+from 0 s to 0.4 s, the inverter is stable and controls its current
+reference with id=i∗
+d=−0.5pu andiq=i∗
+q=0.09 pu. Note
+thatvdis approximately 0.5 pu rather than 1 pu because the
+voltage results from the inverter current and load impedance as
+determined by the Ohm’s law.
+At 0.4 s, i∗
+qis changed from 0.09 pu to 0 pu, which, via
+Ohm’s law, creates a non-zero vq. The integrator of the PI
+controller in the PLL seeks to drive vqto zero by unremittingly
+increasing ω. With the load and current references chosen, noequilibrium exists and the system frequency is unstable. At
+0.8 s, the integrator was disabled by setting ki,PLL=0, which
+removes the contradiction and re-stabilizes the frequency. With
+the integrator removed, the PLL becomes a simple vq-ωdroop
+with a proportional droop gain of kp,PLL. This further illustrates
+the duality between PLL and frequency droop and emphasises
+that some of the difference arise from presence or absence of
+integrator action.
+In conclusion, the grid-following inverter is able to form grid
+current and operate in an islanding mode with a stable frequency
+but a widely varying grid voltage can occur because of the
+combination of the i∗
+dqsetting and load impedance. Further,
+the PI function within the PLL can mean that there are current
+reference choices for which no equilibrium condition exists.
+B. Two-Inverter System: Angle Stability
+As demonstrated by the analysis in previous subsection, a
+single grid-following inverter can feed a load in an island con-
+ﬁguration, and operate robustly, thanks to the duality between
+current-forming and voltage-forming and between PLL and
+frequency droop control. Here, we further explore the principles
+of the angle stability for three different two-inverter systems in
+Fig. 16.
+The ﬁrst case, Fig. 16(a), consists of two grid-forming invert-
+ers (voltage sources). The transient stability will be similar to the
+P-θswing of a conventional synchronous-generator-dominated
+system [5] and we brieﬂy review the principle again here. The
+large-signal swing interaction of two grid-forming inverters can
+be represented by
+J¨θΔ=P∗
+Δ−PΔ, (3)
+whereJis the virtual inertia; θΔ=θ1−θ2is voltage angle
+difference; P∗
+Δ=P∗
+1−P∗
+2is the difference between the power
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. 4550 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+Fig. 16. Angle stability analysis of different two-inverter systems. (a) Grid-
+forming inverters: Two-GFM system. (a) Grid-following inverters: Two-GFL
+system. (c) Interaction between grid-following and grid-forming inverters: GFL-
+GFM system.
+set points of the droop controls; PΔ=P1−P2is the difference
+between the active powers. This swing interaction equation can
+be readily obtained by taking the difference between the swing
+equations of two grid-forming inverters. When the impedance Z
+is purely inductive, that is jX, in Fig. 16(a), the synchronizing
+powerPΔcan be represented by
+PΔ=2V1V2
+Xsin(θΔ), (4)
+i.e., a sine dependence on PΔ-θΔ. Fig. 16(a) plots this relation
+and shows both a stable equilibrium point (SEP) and an unstable
+equilibrium point (UEP). The equilibrium is an SEP when θΔis
+less than90◦. Further, the smaller θΔ, the larger is the maximum
+decelerating area (MDA) and the wider is the range of ﬁrst-swing
+transient stability [2].
+The second case, Fig. 16(b), consists of two grid-following
+inverters (current sources). According to the analysis in Sec-
+tion II-C and Section III-A, grid-following inverters have V-θ
+orQ-θswing characteristics. We consider the reactive power
+format here,
+J¨θΔ=Q∗
+Δ−QΔ, (5)
+whereθΔ=θ1−θ2is the current angle difference; Q∗
+Δ=
+−(Q∗
+1−Q∗
+2)is the difference of the reactive power set points
+(or equivalently v∗
+q)u s e di nP L La n d QΔ=−(Q1−Q2)is
+the difference of reactive powers. When the admittance Yin
+Fig. 16(b) is pure resistive, that is G,w eh a v e
+QΔ=2I1I2
+Gsin(θΔ). (6)
+i.e., a sine dependence on QΔ-θΔ. This means that the two-GFL
+system in Fig. 16(b) may be expected to have a similar transient
+Fig. 17. Test results for the island operation and synchronization of two grid-
+following inverters in Fig. 14(b). A temporary short-circuit fault happens to bus
+2 at 0.2 s and is then cleared at 0.26 s. (a) GFL1. (b) GFL2. (c) Current angle
+difference of GFL1 and GFL2.
+characteristic to the two-GFM system. In other words, two grid-
+following inverters should also be able to synchronize to each
+other without the existence of a voltage source (i.e., islanding
+mode) when the system impedance is resistance-dominated (i.e.,
+passive loads are connected). This is barely reported in literature
+and therefore is tested here shown in Fig. 17. Prior to the 0.2 s
+point, both GFL1 and GFL2 operate stably. At 0.2 s, a temporary
+short-circuit fault is applied at bus 2. The fault reduces the
+voltage at the two grid-following inverters and leads to a surge of
+current and a perturbation of frequency. After three fundamental
+periods, at 0.26 s, the temporary fault is cleared. GFL1 and
+GFL2 re-establish grid currents (through action of the inner loop
+controller), re-synchronize with each other (through action of the
+PLL or equivalently vq-ωdroop or equivalently Q-ωdroop), and
+return the bus voltage back to its nominal value (through supply
+of current through the loads at the buses).
+Next the third case, Fig. 16(c), the interaction between a
+grid-following and a grid-forming inverters, is investigated. The
+swing equations of GFL1 and GFM2 are, respectively,
+J1¨θ1=−Q∗
+1+XI2
+1−V2I1sin(θ1−θ2)/bracehtipupleft /bracehtipdownright/bracehtipdownleft /bracehtipupright
+Q1
+J2¨θ2=P∗
+2−(−V2I1cos(θ1−θ2))/bracehtipupleft /bracehtipdownright/bracehtipdownleft /bracehtipupright
+P2. (7)
+WhenJ1/greatermuchJ2,¨θ1/lessmuch¨θ2,¨θΔ≈−¨θ2. This means that the grid-
+forming inverter synchronizes to the grid-following inverter. As
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. LIet al. : REVISITING GRID-FORMING AND GRID-FOLLOWING INVERTERS: A DUALITY THEORY 4551
+Fig. 18. Test results of the synchronization between a grid-following and a
+grid-forming inverters in Fig. 16(c). At 1 s, the virtual inertia J1of GFL1 is
+increased to inﬁnite by setting the PI controller gains of PLL to zero.
+a consequence, the whole-system swing interaction equation is
+J2¨θΔ=−P∗
+2/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+S∗
+Δ−V2I1cos(θΔ)/bracehtipupleft /bracehtipdownright/bracehtipdownleft /bracehtipupright
+SΔ, (8)
+which is dominated by the second equation in (7), i.e., the swing
+dynamics of the grid-forming inverter GFM2. This equation in-
+dicates a cosine relation between the synchronizing power SΔ
+and the angle difference θΔ, as plotted in blue in Fig. 16(c). In
+contrast, when J1/lessmuchJ2,¨θ1/greatermuch¨θ2,¨θΔ≈¨θ1. This means that
+the grid-following inverter synchronizes to the grid-forming
+inverter. The whole-system swing interaction is dominated by
+the ﬁrst equation in (7), i.e., the swing dynamics of the grid-
+following inverter GFL1, as
+J1¨θΔ=−Q∗
+1+XI2
+1/bracehtipupleft /bracehtipdownright/bracehtipdownleft /bracehtipupright
+S∗
+Δ−V2I1sin(θΔ)/bracehtipupleft /bracehtipdownright/bracehtipdownleft /bracehtipupright
+SΔ. (9)
+This gives a sine SΔ-θΔrelation, as plotted in red in Fig. 16(c).
+It is worth mentioning that, for different ratios J1/J2, the system
+has different power-angle relations and different swing curves,
+and therefore different SEPs. This notion was tested in sim-
+ulation with results shown in Fig. 18. Prior to the 1 s point,
+the system operates stably by using the rated parameters in
+Table B1. We can observe that 90◦>θΔ>0◦, which means
+the whole-system operates at SEP1 (red curve) in Fig. 16(c)
+withJ1/lessmuchJ2(the grid-following inverter synchronizes to the
+grid-forming inverter). At 1 s, the virtual inertia J1of GFL1 is
+increased to inﬁnite by setting the PI controller of PLL to zero,
+i.e., an unchanged output frequency of PLL. This sudden change
+leads toJ1/greatermuchJ2(the grid-forming inverter synchronizes to the
+grid-following inverter), and forces the system to move from
+SEP1 on the red curve to USP on the blue curve in Fig. 16(c).
+Thereafter, the system leaves the UEP and gradually converges
+to SEP2 on the blue curve with 0◦>θΔ>−90◦.
+In conclusion for this subsection, just as two grid-forming
+inverters can synchronize to each other, two grid-following
+inverters can also synchronize to each other and operate stably. A
+grid-forming and a grid-following inverter can also synchronizeTABLE II
+RATED PARAMETERS
+to each other with a characteristic that depends on their rela-
+tive inertias, i.e., the one with the lower inertia dominates the
+swing dynamics. This further exempliﬁes the duality between
+grid-forming and grid-following inverters. However, it is worth
+noting that, the speciﬁc power-angle ( SΔ-θΔ) relation and swing
+dynamics of the whole system are inﬂuenced by many factors
+including the types of inverters (grid-forming, grid-following),
+the virtual inertia values of inverters (large, small), the types
+of impedance of grid networks and loads (resistive, inductive,
+capacitive), and the steady-state operating points. This means
+that obtaining an interpretable and concise analytical solution
+for the transient swing dynamics of a multi-inverter system
+would be challenging and needs further detailed investigations
+in the future [21]. In next subsection, the qualitative analysis
+of a multi-inverter system will be explored, with the help of
+time-domain simulations.
+C. Multi-Inverter System: Virtual Inertia and Virtual Damping
+In this subsection, parameters inﬂuencing the synchronization
+transient stability of a multi-inverter system are further consid-
+ered. The swing equations (1) and (2) derived in Section III-A
+are recalled here: For a grid-forming inverter, the virtual inertia
+Jand virtual damping KDare represented by Tf/mand1/m
+respectively, i.e., determined by the time constant Tfof the LPF
+and the droop gain m; For a grid-following inverter, the virtual
+inertiaJand virtual damping KDare represented by 1/ki,PLL
+andVd0kp,PLL/ki,PLL, i.e., inﬂuenced by the PLL PI controller.
+Note that JandKDfor the grid-forming inverter and Jfor the
+grid-following inverter are not dependent on the steady-state
+operating point, which means they can be directly used for
+transient stability analysis. As for KDof the grid-following in-
+verter, as long as d-axis voltage Vd0is positive, KDis positively
+proportional to kp,PLL/ki,PLL. For both inverters, the larger of J
+andKD, and the greater the chance of stable transients, like a
+synchronous generator. This principle will now be veriﬁed using
+the 14-bus system in Fig. 12.
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. 4552 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+Fig. 19. Transient stability test when a temporary fault occurs in bus 6 at 0.2 s
+and is cleared at 0.26 s. The dashed line represents stable test and solid line
+indicates the unstable test. (a) Droop gain of grid-forming inverter is reduced to
+0.01 pu (dashed line) or increased to 0.08 pu (solid line). (b) PLL integral gain
+of grid-following inverter is reduced by 10 times (dashed line) or increased by
+10 times (solid line).
+Results from the test system are displayed in Fig. 19 with
+grid-forming examined in (a) and grid-following in (b). In both
+cases, a short-circuit fault was applied at 0.2 s at bus 6 (the
+approximate center in the grid). The fault was cleared three
+fundamental periods later [24], i.e., at 0.26 s. In Fig. 19(a)
+results for different values of droop gain mare shown. When
+the droop gain is small (0.01 pu), the system recovers to its
+pre-fault operating point after the fault is cleared (dashed line
+in the ﬁgure). When droop gain is large (0.08 pu, solid line
+in the ﬁgure), the system is seen to be small-signal stable
+before the fault occurs (before 0.2 s), but following the transient
+disturbance of the fault it does not recover to stable operation
+at its original operating point and is therefore has a large-signal
+instability. This observation is consistent with the swing (1) for
+this case where a large droop gain creates a small inertia and
+small damping in the grid-forming inverter and as a result there
+is a greater chance of transient instability.
+Fig. 19(b) shows the transient stability with different values
+of the PLL integral gain ki,PLLof the grid-following inverter.
+Whenki,PLLis small (dashed line), the system is stable. When
+ki,PLLis large (solid line), the system is small-signal stable, but
+does not recover to its original operating point after the fault
+event and therefore is large-signal unstable. This observation
+also consistent with the swing equation (2) because a large ki,PLL
+indicates small virtual inertia and small damping of the grid-
+following inverter.
+Comparing Fig. 19(a) and (b), it is seen that the grid-forming
+inverter GFM6 suffers a loss of synchronism and frequency
+collapse in (a) whereas it is the grid-following inverter GFL8 that
+looses synchronism in (b). In both cases, but particularly there
+are disturbances to other IBR but no loss of synchronism. Thisalso illustrates that the main source of the transient instability is
+different in grid-forming and grid following cases.
+V. C ONCLUSION
+An examination of synchronization loops of grid-forming and
+grid-following inverters has revealed a set of properties which
+are duals of each other. This extends well beyond the simple
+observation that one acts as a voltage source and the other as a
+current source. The duality reveals similarities and differences
+between the two types that can aid our understanding of how
+instability can arise in inverter networks and what measures can
+be taken to combat instability. The duality is seen in the following
+points.
+a) Converse synchronization loop. The P-ωdroop control
+for a grid-forming inverter is equivalent to id-ωdroop
+control when vdis constant and vqis 0, which can further
+be regarded as a PLL acting on idwith a proportional
+phase-locking controller. The PLL for a grid-following
+inverter acting on vqcan be regarded as vq-ωdroop control
+with a PI droop gain and further is equivalent to Q-ωdroop
+control when idis constant and iqis 0.
+b) Converse grid-interfacing characteristics. The grid-
+forming inverter is current-following and voltage-forming.
+The grid-following inverter is voltage-following and
+current-forming.
+c) Converse swing characteristics. The grid-forming inverter
+has a current-angle swing or, equivalently, a active-power-
+angle swing. The grid-following inverter has a voltage-
+angle swing or, equivalently, reactive-power-angle swing.
+d) Similar controller gain characteristics (converse
+impedance/admittance shaping). For grid-forming and
+grid-following, the larger the synchronization controller
+gains (frequency droop gain and PLL bandwidth) or
+the smaller the inner-loop controller gains (voltage- and
+current-loop bandwidths), the higher the likelihood of
+interaction and synchronization instability.
+e) Converse grid strength compatibility. The grid-forming in-
+verter is vulnerable to strong grid with low grid impedance
+(strong grid voltage and weak grid current). The grid-
+following inverter is vulnerable to weak grid with low grid
+admittance (strong grid current and weak grid voltage).
+f) Similar transient stability mechanism. The transient sta-
+bility of both the grid-forming inverter and grid-following
+inverter depends on their swing equation, virtual iner-
+tia, and virtual damping. Like a grid-forming inverter, a
+grid-following inverter can also operate in island mode
+or synchronize to another grid-following inverter without
+a voltage source present. A grid-forming inverter and a
+grid-following inverter can also synchronize to each other
+depending on their virtual inertia values.
+The duality interpretation proposed here has been shown
+to unify the view of grid-synchronization and grid-interfacing
+characteristics of two types of inverter in a symmetric and
+elegant form. This uniﬁed view can not only offer promis-
+ing pathway towards multi-inverter analysis which is missing
+now [21], but also inspire novel concepts (such as id-PLL,vq-ω
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. LIet al. : REVISITING GRID-FORMING AND GRID-FOLLOWING INVERTERS: A DUALITY THEORY 4553
+droop, voltage/current-forming/following, and voltage/current
+strength) and help to interpret surprising phenomena (such as
+strong grid instability of grid-forming inverters and islanding
+of grid-following inverters). It is anticipated that the use of
+duality can also be applied to or incorporated with other power
+engineering theories and lead to further new interpretations
+of future power systems. But it is also remarked that not all
+properties are duals because some proprieties relate to the
+voltage-dominated sources, parallel-connected apparatuses, and
+inductor-dominated lines of grids nowadays, and the format of
+controller in the synchronization loop. This may lead to different
+roles of two types of inverters in different research areas (voltage
+stability, power quality, etc) and may make the analysis of
+multi-inverter systems challenging, which needs further studies.
+APPENDIX A
+FUNDAMENTALS OF COMPLEXdqFRAME
+The complex dqframe (dq±frame) [4], [16], [17] is used for
+small-signal analysis in this article. For an arbitrary signal udqin
+dqframe, the corresponding complex signal udq±indq±frame
+can be obtained as
+/bracketleftBigg
+u+
+u−/bracketrightBigg
+/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+udq±=/bracketleftBigg
+1j
+1−j/bracketrightBigg
+/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+Tj/bracketleftBigg
+ud
+uq/bracketrightBigg
+/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+udq(10)
+whereu+=ud+juqandu−=ud−juqare the forward and
+backward complex space vectors, respectively; and Tjis the
+transformation matrix. According to this transformation law, for
+adqframe system model
+/bracketleftBigg
+yd
+yq/bracketrightBigg
+/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+ydq=/bracketleftBigg
+GddGdq
+GqdGqq/bracketrightBigg
+/bracehtipupleft /bracehtipdownright/bracehtipdownleft /bracehtipupright
+Gdq/bracketleftBigg
+ud
+uq/bracketrightBigg
+/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+udq(11)
+we can get the corresponding dq±frame model as
+/bracketleftBigg
+y+
+y−/bracketrightBigg
+/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+ydq±=/bracketleftBigg
+G+G−
+G−G+/bracketrightBigg
+/bracehtipupleft /bracehtipdownright/bracehtipdownleft /bracehtipupright
+Gdq±/bracketleftBigg
+u+
+u−/bracketrightBigg
+/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+udq±(12)
+with
+Gdq±=TjGdqT−1
+j (13)
+where the overbar in Gdq±indicates the conjugate operation.
+For power system applications, Gdq±normally has a simpler
+and more symmetric mathematical structure than Gdq, which
+facilitates the analysis [4], [16].
+APPENDIX B
+PARAMETERS
+If not speciﬁed, rated parameters in Table B1 are used when
+obtaining the results of single-inverter cases in Section III. For
+the 14-bus multi-inverter case, parameters are available online
+at [25].REFERENCES
+[1] F. Blaabjerg, R. Teodorescu, M. Liserre, and A. V . Timbus, “Overview
+of control and grid synchronization for distributed power generation sys-
+tems,” IEEE Trans. Ind. Electron. , vol. 53, no. 5, pp. 1398–1409, Oct. 2006.
+[2] P. Kundur, Power System Stability and Control. ,v o l .7 .N e wY o r k ,N Y ,
+USA: McGraw-hill, 1994.
+[3] X. Wang, M. G. Taul, H. Wu, Y . Liao, F. Blaabjerg, and L. Harne-
+fors, “Grid-synchronization stability of converter-based resources–an
+overview,” IEEE Open J. Ind. Appl. , vol. 1, pp. 115–134, Aug. 2020.
+[4] Y . Li, Y . Gu, Y . Zhu, A. Junyent-Ferre, X. Xiang, and T. C. Green,
+“Impedance circuit model of grid-forming inverter: Visualizing control
+algorithms as circuit elements,” IEEE Trans. Power Electron. , vol. 36,
+no. 3, pp. 3377–3395, Mar. 2021.
+[5] S. D’Arco and J. A. Suul, “Equivalence of virtual synchronous machines
+and frequency-droops for converter-based microgrids,” IEEE Trans. Smart
+Grid , vol. 5, no. 1, pp. 394–395, Jan. 2014.
+[6] R. Rosso, X. Wang, M. Liserre, X. Lu, and S. Engelken, “Grid-forming
+converters: Control approaches, grid-synchronization, and future trends-a
+review,” IEEE Open J. Ind. Appl. , vol. 2, pp. 93–109, Apr. 2021.
+[7] S.-K. Chung, “A phase tracking system for three phase utility interface
+inverters,” IEEE Trans. Power Electron. , vol. 15, no. 3, pp. 431–438,
+May 2000.
+[8] B. Wen, D. Boroyevich, R. Burgos, P. Mattavelli, and Z. Shen, “Analysis
+of DQ small-signal impedance of grid-tied inverters,” IEEE Trans. Power
+Electron. , vol. 31, no. 1, pp. 675–687, Jan. 2016.
+[9] D. Dong, B. Wen, D. Boroyevich, P. Mattavelli, and Y . Xue, “Analysis of
+phase-locked loop low-frequency stability in three-phase grid-connected
+power converters considering impedance interactions,” IEEE Trans. Ind.
+Electron. , vol. 62, no. 1, pp. 310–321, Jan. 2015.
+[10] J. Matevosyan et al. , “Grid-forming inverters: Are they the key for high re-
+newable penetration?” IEEE Power Energy Mag. , vol. 17, no. 6, pp. 89–98,
+Nov./Dec. 2019.
+[11] Q. Hu, L. Fu, F. Ma, and F. Ji, “Large signal synchronizing instability of
+PLL-based VSC connected to weak AC grid,” IEEE Trans. Power Syst. ,
+vol. 34, no. 4, pp. 3220–3229, Jul. 2019.
+[12] M. G. Taul, X. Wang, P. Davari, and F. Blaabjerg, “An overview of assess-
+ment methods for synchronization stability of grid-connected converters
+under severe symmetrical grid faults,” IEEE Trans. Power Electron. ,
+vol. 34, no. 10, pp. 9655–9670, Oct. 2019.
+[13] Q.-C. Zhong and D. Boroyevich, “Structural resemblance between droop
+controllers and phase-locked loops,” IEEE Access , vol. 4, pp. 5733–5741,
+2016.
+[14] H. Yuan, X. Yuan, and J. Hu, “Modeling of grid-connected VSCs for
+power system small-signal stability analysis in DC-link voltage control
+timescale,” IEEE Trans. Power Syst. , vol. 32, no. 5, pp. 3981–3991,
+Sep. 2017.
+[15] A. Brameller, “Electric energy: Its generation, transmission and use,”
+Electron. Power , vol. 26, no. 10, p. 823, Oct. 1980.
+[16] Y . Li, Y . Gu, and T. Green, “Interpreting frame transformations in AC
+systems as diagonalization of harmonic transfer functions,” IEEE Trans.
+Circuits Syst. I., Reg. Papers , vol. 67, no. 7, pp. 2481–2491, Jul. 2020.
+[17] L. Harnefors, “Modeling of three-phase dynamic systems using complex
+transfer functions and transfer matrices,” IEEE Trans. Ind. Electron. ,
+vol. 54, no. 4, pp. 2239–2248, Aug. 2007.
+[18] Y . Gu, Y . Li, and T. Green, “Impedance-based whole-system modeling for
+a composite grid via embedding of frame-dynamics,” IEEE Trans. Power
+Syst. , vol. 36, no. 1, pp. 336–345, Jan. 2021.
+[19] Y . Li, Y . Gu, and T. C. Green, “Mapping of dynamics between mechanical
+and electrical ports in SG-IBR composite grids,” IEEE Trans. Power Syst .,
+doi: 10.1109/TPWRS.2022.3141882 .
+[20] X. Meng, J. Liu, and Z. Liu, “A generalized droop control for grid-
+supporting inverter based on comparison between traditional droop control
+and virtual synchronous generator control,” IEEE Trans. Power Electron. ,
+vol. 34, no. 6, pp. 5416–5438, Jun. 2019.
+[21] Y . Gu, Y . Li, and T. C. Green, “The nature of synchronisation in power sys-
+tems: Insights from communication systems,” 2021, arXiv:2103.16608 .
+[22] X. Wang and F. Blaabjerg, “Harmonic stability in power electronic-based
+power systems: Concept, modeling, and analysis,” IEEE Trans. Smart
+Grid , vol. 10, no. 3, pp. 2858–2870, May 2019.
+[23] IEEE 14 bus power system. [Online]. Available: https://icseg.iti.illinois.
+edu/ieee-14-bus-system
+[24] P. M. Anderson and P. Anderson, Power System Protection , vol. 1307. New
+York, NY , USA: McGraw-Hill, 1999.
+[25] “Future power networks,” [Online]. Available: https://github.com/Future-
+Power-Networks/Publications
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. 4554 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+Yitong Li (Member, IEEE) received the B.Eng. de-
+grees in electrical engineering from the Huazhong
+University of Science and Technology, Wuhan,
+China, and the University of Birmingham, Birm-
+ingham, U.K., in 2015, the M.Sc degree in future
+power networks and the Ph.D. degree in electrical
+engineering from Imperial College London, London,
+U.K., in 2016 and 2021, respectively. He is currently
+a Research Associate with Imperial College London.
+He is also a Visiting Researcher with the University
+of Bath, Bath, U.K. His current research interests
+include control of power electronic converters and analysis of power system
+dynamics.
+Yunjie Gu (Senior Member, IEEE) received the B.Sc.
+and Ph.D. degrees in electrical engineering from
+Zhejiang University, Hangzhou, China, in 2010 and
+2015 respectively. He was a Consulting Engineer with
+General Electric Global Research Centre, Shanghai,
+from 2015 to 2016. After that, he joined Imperial Col-
+lege London, London, U.K., as a Research Associate
+and was an EPSRC-funded Innovation Fellow (award
+EP/S000909/1) from 2018 to 2020. He is currently a
+Lecturer with the University of Bath, and an Honorary
+Lecturer with Imperial College. His research interests
+include the fundamental theories and computational tools for dynamic analysis
+of power-electronic-based renewable power systems, and new technologies for
+stability enhancement.
+Timothy C. Green (Fellow, IEEE) received the B.Sc.
+(Eng.) (ﬁrst class Hons.) from Imperial College Lon-
+don, London, U.K., in 1986 and the Ph.D. degree from
+Heriot-Watt University, Edinburgh, U.K., in 1990. He
+is currently a Professor of Electrical Power Engineer-
+ing, Imperial College London. His research interests
+include the control, stability and protection of power
+systems with very high penetration of inverter-based
+resources. Previously, in HVDC he has contributed
+converter designs that reduce losses while also pro-
+viding control functions assist AC system integration.
+In distribution systems, he has pioneered the use of soft open points and the study
+of stability of microgrids. Prof. Green is a Chartered Engineering the U.K. and a
+Fellow of the Royal Academy of Engineering. He is also a Fellow of the Chinese
+Society for Electrical Engineers.
+Authorized licensed use limited to: Beijing Jiaotong University. Downloaded on August 24,2023 at 04:27:50 UTC from IEEE Xplore.  Restrictions apply. 

@@ -1,0 +1,130 @@
+[MISSING_PAGE_FAIL:1]
+
+Regarding exclusively positive- and negative-sequence components, _Clarke_ transformation allows voltage vector translation from the \(abc\) to the \(\alpha\beta\) reference frames as follow:
+
+\[\mathbf{v}_{\alpha\beta}=\left[\begin{array}{cc}T_{\alpha\beta}\end{array} \right]\mathbf{v}_{\alpha\kappa}\;\;\;;\;\;\left[\begin{array}{cc}T_{\alpha \beta}\end{array}\right]=\sqrt{\frac{2}{3}}\left[\begin{array}{cc}1&-\frac{ 1}{2}&-\frac{1}{2}\\ 0&\frac{\sqrt{2}}{2}&-\frac{\sqrt{2}}{2}\end{array}\right]. \tag{3}\]
+
+So instantaneous positive- and negative-sequence voltage components on the \(\alpha\beta\) reference frame are calculated as:
+
+\[\mathbf{v}^{+}_{\alpha\beta}=\left[\begin{array}{cc}T_{\alpha\beta}\end{array} \right]\mathbf{v}^{+}_{\alpha\kappa}=\left[\begin{array}{cc}T_{\alpha\beta} \end{array}\right]\left[\begin{array}{cc}T_{\gamma}\end{array}\right] \mathbf{v}_{\alpha\kappa} \tag{4a}\] \[=\left[\begin{array}{cc}T_{\alpha\beta}\end{array}\right] \left[\begin{array}{cc}T_{\gamma}\end{array}\right]\mathbf{v}_{\alpha \beta}=\frac{1}{2}\left[\begin{array}{cc}1&-q\\ q&1\end{array}\right]\mathbf{v}_{\alpha\beta},\] \[\mathbf{v}^{-}_{\alpha\beta}=\left[\begin{array}{cc}T_{\alpha \beta}\end{array}\right]\mathbf{v}^{-}_{\alpha\kappa}=\left[\begin{array}{ cc}T_{\alpha\beta}\end{array}\right]\left[\begin{array}{cc}T_{\gamma} \end{array}\right]\mathbf{v}_{\alpha\kappa}\] (4b) \[=\left[\begin{array}{cc}T_{\alpha\beta}\end{array}\right]\left[ \begin{array}{cc}T_{\gamma}\end{array}\right]\mathbf{\tilde{T}}_{\alpha \beta}^{\ast}\mathbf{v}_{\alpha\beta}=\frac{1}{2}\left[\begin{array}{cc}1&q \\ -q&1\end{array}\right]\mathbf{v}_{\alpha\beta},\]
+
+where \(q=e^{-\frac{q^{2}}{2}}\) is a phase-shift time-domain operator to obtain in-quadrature version (90\({}^{o}\)-lagging) of an original waveform. Hence, the system of Fig. 1 is proposed, where the quadrature-signals generator (QSG) and the positive-/negative-sequence calculator (PNSC) blocks are highlighted.
+
+## III Quadrature Signals Generation Based on a Dual EPLL
+
+As explained in [6], the EPLL is actually an adaptive filter whose frequency moves based on the fundamental frequency of the grid. This adaptive filter can be understood as either a notch or a band-pass filter depending on the regarded node [8]. Fig. 2 shows the modular structure of the EPLL \(-\)slightly modified for a better visualization and understanding. In this figure, the EPLL has been split up into the band-pass adaptive filter (BPAF) and the standard PLL modules. Moreover, port symbols have been added because these two modules will act as independent blocks in the following. In the original EPLL. [6], the in-quadrature output signal was 90\({}^{o}\)-leading the in-phase signal. This made possible to implement the time domain operator \(a\) and calculate (2) on the \(abc\) natural reference frame. The EPLL of Fig. 2 shows a small modification in relation to the original one: the quadrature output signal \(qv^{\ast}\) is now 90\({}^{o}\)-lagging \(v^{\ast}\).
+
+This change is due to the fact that the modified EPLL will be used to implement the \(q\) operator of (4). Transfer function of the BPAF is given by [8]:
+
+\[D(s)=\frac{v^{\prime}}{v}(s)=\frac{ks}{s^{2}+ks+\omega^{\prime 2}}\,, \tag{5}\]
+
+where \(\omega\)' is the grid frequency detected by the PLL.
+
+As earlier mentioned, the EPLL concept results in a very interesting solution for synchronization with sinusoidal single-phase voltages because of: _i)_ the band-pass filtering characteristic which attenuates undesired harmonics, _ii)_ the capability to adapt \(\omega\)' to the fundamental frequency of the grid, _iii)_ the quadrature-signal generation which allows the application of the ISC method to calculate sequence components, _iv)_ the competence identifying amplitude, phase-angle and frequency of the input signal.
+
+In [6], the single-phase concept is directly extended toward the three-phase scenario by using three independent EPLLs - one per each phase- to implement positive-sequence calculation of (1a). This direct application of the EPLL to three-phase systems is prone to be improved since, as Fig. 1 shows, the two dimensional \(\alpha\beta\) reference frame can be used instead of the \(abc\) natural reference frame, which entails: _i)_ smaller computational burden because only two EPLL are used, _ii)_ higher robustness because zero-sequence components are blocked in its input by _Clarke_ transformation, _iii)_ elimination of the fourth EPLL because amplitude and \(\sin(\theta)/\cos(\theta)\) of the positive- and negative voltage vectors can be calculated by simple arithmetic operation on \(\mathbf{v}^{\ast}_{\alpha\beta}\) and \(\mathbf{v}^{\ast}_{\alpha\beta}\). Moreover, if it is accepted as true that \(\alpha\)-\(\beta\) components of \(\mathbf{v}_{\alpha\beta}\) are always in-quadrature, it is not necessary to detect the phase-angle in both \(\alpha\) and \(\beta\) phases but only in one of them. Consequently, as Fig. 3 shows, two BPAFs and only one PLL are necessary to implement the QSG based on a dual EPLL (DEPLL-QSG). Letters identifying inputs and outputs in the blocks of Fig. 3 coincides with the ports name in Fig. 2. This nomenclature rule will be maintained from now on to designate block ports.
+
+In most grids, positive- and negative-sequence impedances are equal and the synchronization system of Fig. 3 works well detecting positive- and negative-sequence components of the faulted voltage. However, effects of dynamic loads give rise to discrepancies between the positive- and negative-sequence impedances seen from the point of common coupling. This usually happens when big induction motors
+
+Fig. 1: Positive-/negative-sequence calculation
+
+Fig. 2: Modular EPLL structure are connected to the grid [9]. In such case, the DEPLL will make detection errors due to assumption about quadrature in the \(\alpha\)-\(\beta\) components of \(\mathbf{v}_{\alpha\beta}\) is not longer true. For this reason, a new frequency-adaptive phase-insensitive QSG is proposed in next section.
+
+## IV Second Order Generalized Integrator for Quadrature-Signals Generation
+
+To overcome drawbacks in the DEPLL-QSG, this work proposes the use of a second order generalized integrator (SOGI)[10] as a building block for the QSG. The SOGI diagram is shown in Fig. 4(a) and its transfer function is:
+
+\[S(s)=\frac{d}{f}(s)=\frac{s\omega^{s}}{s^{2}+\omega^{s^{2}}}\,. \tag{6}\]
+
+Transfer function of (6) evidences that the SOGI acts as an infinite-gain integrator when input signal \(f\) is sinusoidal at \(\omega\)' frequency. Intuitively, the system shown in Fig. 4(b) could be proposed for tracking the input signal \(v\). Characteristics transfer functions of such system are given by:
+
+\[D(s)=\frac{v^{\prime}}{v}(s)=\frac{k\omega^{s}s}{s^{2}+k\omega^{s}s+\omega^{s^ {2}}}\,, \tag{7a}\] \[Q(s)=\frac{qv^{\prime}}{v}(s)=\frac{k\omega^{s^{2}}}{s^{2}+k\omega^{s}s+ \omega^{s^{2}}}\,, \tag{7b}\]
+
+where \(\omega\) and \(k\) set resonance frequency and damping factor respectively. Transfer functions of (7) reveal that tracking system of Fig. 4(b) provides band-pass and low-pass filtering characteristic to \(v\)' and \(qv\)' outputs respectively, which is interesting to attenuate harmonics of the input \(v\). It is also evident from (7) that if \(v\) is a sinusoidal signal, \(v\)' and \(qv\)' will be sinusoidal as well. Moreover, \(qv\)' will be always 90'-lagging \(v\)', independently of both the frequency of \(v\) and the values of \(\omega\)' and \(k\). Consequently, the tracking system of Fig. 4(b) is actually a QSG insensitive to variation of either the tuning parameters or the input frequency (SOGI-QSG). Moreover, the SOGI-QSG has not to be synchronized with any additional sinusoidal reference signal which also makes it insensitive to phase variations in the input signal.
+
+## V Frequency-Locked Loop
+
+Once presented the structure of the SOGI-QSG it is now necessary to render it frequency-adaptive. This goal can be achieved by using the conventional PLL structure shown in Fig. 2. In such case, the error signal \(\varepsilon_{v}\) is provided to the PLL as an input and the estimated frequency \(\omega\)' is returned back to the SOGI-QSG. Now, \(ju\) continues to be the feedback signal of the PLL control loop, whereas signals \(u\) and \(qu\) are no longer used. Feed-forward signal \(\omega_{\beta V}\) is presetting the detected frequency around its nominal value to reduce the residual error controlled by the PI. Although a trigonometric function is used to obtain \(ju\), this signal is not connected to the SOGI-QSG, so the system keeps insensitive to changes of the phase-angle of \(v\). Consequently, a unit consisting of two SOGI-QSGs and only one PLL could be used in the structure of Fig. 3 for proper positive- and negative-sequence voltage components detection under generic grid conditions.
+
+In the SOGI-QSG-PLL set-up, it is worth to realise that signal \(ju\) is 90'-leading \(v\)' when the PLL is synchronized in steady state. Taking into account that \(ju=-qu\) and \(qu\propto qv^{\prime}\), it seems intuitive to use \(-qv^{\prime}\) (instead \(ju\)) as the feedback signal of the PLL control loop. Obviously, this change entails to modify the parameters of the PI controller as well. The subsystem resulting from these changes is simpler than the conventional PLL and neither phase-angle nor trigonometric functions are used for frequency estimation, being possible to talk about a frequency-locked loop (FLL) instead of a PLL. Fig. 5 shows the diagram of the proposed FLL, in which the product of \(-qv^{\prime}\) and \(\varepsilon_{v}\) is processed by an integrator controller with gain \(\gamma\) to obtain the estimated center grid frequency.
+
+Fig. 4: (a) SOGI diagram, (b) SOGI-QSG diagram
+
+Fig. 5: FLL diagram
+
+Fig. 3: Positive-negative-sequence calculation based on the DEPLL
+
+## VI Grid synchronization system based on the DSOGI-FL
+
+The structure of the grid synchronization system proposed in this paper is shown in Fig. 6. In this case, a set-up consisting of two SOGI-QSGs and only one FLL (DSOGI-FLL) provides the input signals to the PNSC on the \(\alpha\beta\) reference frame. The DSOGI-FLL is extremely simple, and overcomes the drawbacks of earlier set-ups achieving proper positive- and negative-sequence components identification under generic grid operating conditions. Transfer functions from \(\mathbf{v}_{\alpha\beta}\) to \(\mathbf{v}_{\alpha\beta}^{{}^{\prime}}\) and \(\mathbf{v}_{\alpha\beta}^{{}^{\prime}}\) is studied in the following.
+
+When \(\mathbf{v}_{\alpha\beta}\) is a positive-sequence balanced sinusoidal voltage at frequency \(\omega\), its \(\alpha\)-\(\beta\) components keep the following relationship:
+
+\[v_{\beta}(s)=-\frac{s}{\omega}v_{\alpha}(s). \tag{8}\]
+
+Taking into account that:
+
+\[v_{\alpha}^{\prime}(s)=\frac{1}{2}\Big{(}v_{\alpha}^{{}^{\prime}}(s)-qv_{ \beta}^{{}^{\prime}}(s)\Big{)}=\frac{1}{2}\Big{(}D(s)+\frac{s}{\omega}Q(s) \Big{)}v_{\alpha}(s)\, \tag{9}\]
+
+the transfer function from \(v_{\alpha}\) to \(v_{\alpha}^{{}^{\prime}}\) in the complex frequency domain is given by:
+
+\[P(j\omega)=\frac{v_{\alpha}^{{}^{\prime}}}{v_{\alpha}}(j\omega)=\frac{1}{2} \frac{k\omega^{\prime}(\omega+\omega^{\prime})}{k\omega^{\prime}\omega+j\left( \omega^{2}-\omega^{{}^{\prime}2}\right)}, \tag{10}\]
+
+where \(\omega\)', the frequency detected by the FLL, is supposed to be in steady-state. Conducting a similar reasoning on the \(\beta\) signal, it can be concluded that \(v_{\beta}^{{}^{\prime}}\) has equal amplitude than \(v_{\alpha}^{{}^{\prime}}\) but is \(90\)-lagging it. To know how \(\mathbf{v}_{\alpha\beta}^{{}^{\prime}}\) will be when \(\mathbf{v}_{\alpha\beta}\) is a negative-sequence vector it is only necessary to substitute \(\omega\) by \(-\omega\) in (10). Fig. 7 plots the amplitude of the transfer function of (10) for positive-sequence (\(\omega\)\(0\) - continuous line) and negative-sequence (\(\omega\)\(0\) -dashed line) voltages at the input of the DSOGI-FLL. Fig. 7 reveals that, in steady-state and regarding positive-sequence detection, the DSOGI-FLL acts as both a low-pass filter for positive-sequence and a notch filter for the negative-sequence.
+
+Fig. 7 also shows that the smaller value for the gain \(k\) the more selective response of the system, which is interesting for harmonics rejection. However, this high selectivity entails higher oscillations in the response and longer stabilization time. Consequently, a trade-off between frequency selectivity and response speed should be adopted. Conclusions obtained for the detection of \(\mathbf{v}_{\alpha\beta}^{{}^{\prime}}\) are directly applicable to the detection of \(\mathbf{v}_{\alpha\beta}^{{}^{\prime}}\), being only necessary to swap the roll of the positive- and negative-sequence components.
+
+## VII Simulation results
+
+To evidence the high performances of the DSOGI-FLL, a case detecting positive- and negative-sequence components in an extremely adverse grid situation is simulated using Matlab. The grid voltage is simultaneously affected by imbalance, distortion and frequency variation. The positive- and negative-sequence phasors of the faulty voltage are \(\vec{V}^{{}^{\prime}}=0.733\underline{5}\)pu and \(\vec{V}^{{}^{\prime}}=0.210\underline{5}0,4\underline{5}\)pu ; with \(\vec{V}_{\alpha\beta}=\underline{1}0\underline{5}0\underline{5}\)pu for the pre-fault phase-voltage (220Vrms). The THD of the faulty voltage is set to 5%, being 3.7%, 3.1% and 1% the amplitudes for the 5\(\underline{}\), 7\(\underline{}\) and 9\(\underline{}\) characteristic harmonics, respectively. The grid frequency jumps from 50Hz to 60Hz.
+
+Fig. 8 shows the waveforms resulting from the previously mentioned simulation. The DSOGI-FLL parameters were set to \(k=\gamma=1.41\). Fig. 8(a) shows the unbalanced and distorted grid voltage resulting from applying all earlier disturbances in one go at \(t^{=}100\)ms. Fig. 8(b) shows the detected amplitudes for the positive- and negative-sequence voltage vectors, whereas Fig. 8(c) and Fig. 8(d) show their phase-angles, respectively. These waveforms are given by:
+
+\[\left|\mathbf{v}^{{}^{\prime}}\right|=\sqrt{\left(v_{\alpha}^{{}^{\prime}} \right)^{2}+\left(v_{\beta}^{{}^{\prime}}\right)^{2}}\ \ \ ;\ \ \ \ \theta^{{}^{\prime}}=\tan^{-1}\frac{v_{\beta}^{{}^{\prime}}}{v_{\alpha}^{{}^{ \prime}}}. \tag{11}\]
+
+Fig. 8(e) and Fig. 8(f) show the detected positive- and negative-sequence voltages expressed on the _abc_ natural reference frame and Fig. 8(g) shows the evolution of the frequency detected by the FLL. These plots reveal the excellent behavior of the DSOGI-FLL under such severe operating conditions. The proposed synchronization system is detecting the amplitude and phase-angle of the positive- and negative-sequence components after about 20ms from the grid fault occurrence.
+
+Fig. 6: Positive-/negative-sequence calculation based on the DSOGI-FLLIt is worth to stress how 'clean' the positive-sequence waveforms of Fig. 8(e) are, THD of 0.5%. The negative-sequence waveforms of Fig. 8(f) have a THD of 2%. This distortion arises because the 5th harmonic of the grid voltage has negative-sequence and so the negative-sequence calculator does not act as a notch filter but as a low-pass filter, achieving a lower attenuation of the 5th harmonic. Phase-angles of Fig. 8(c) and Fig. 8(d) denote that \(\alpha\)-\(\beta\) components of \(\textbf{v}_{adj}\) are not in-quadrature. Nevertheless, the DSOGI-FLL is successful detecting the positive-and negative-sequence components of the grid voltage.
+
+## VIII Experimental Results
+
+The DSOGI-FLL has been evaluated in an experimental set-up in which the faulty grid is replaced by a programmable three-phase ac-power source (California Instruments 5001IX) connected through a \(\Delta y\) transformer. In the \(y\) winding of this transformer, a VSI supplies energy from a dc power-supply to the grid. The DSOGI-FLL is the grid synchronization system used in the VSI control. The DSOGI-FLL algorithm, together the rest of controllers, is implemented in a DSP card (dSpace 1103). The sampling frequency is set to 15 kHz.
+
+In a first experiment the ac-power source suddenly decreases the rms voltage of one phase from 220V to 100V. This fault is propagated to the \(y\) winding of the transformer as a dip type C, being \(\bar{V}^{*}\) = 0.818[0]pu and \(\bar{V}^{*}\) = 0.182[0]pu the positive- and negative-sequence phasors during the fault. Fig. 9 shows the waveforms from this first experiment, where it is remarkable the high speed in the detection, achieving precise results in less than one grid cycle. It is worth to notice that the detected phase-angles for both the positive- and negative-sequence voltages show a coherent evolution before the grid fault happens. It is because of the nonidealities of the experimental plant, which are giving rise to a very faint but steady imbalance in the grid voltage. The high sensibility of the DSOGI-FLL allows detecting this tiny negative-sequence component before the grid fault ocurrence. In a second experiment the grid frequency varies from 50Hz to 60Hz. Waveforms of Fig. 10 validate the frequency-adaptive characteristic of the DSOGI-FLL which is able to overcome this big jump of frequency without oscillations in about 40ms. A third experiment is devoted to evaluate the immunity of the DSOGI-FLL to distortion in the grid voltage. A distorted waveform with a THD of 5% and equal harmonic composition that earlier described in SSVII is programmed in the ac-power source. In this case it is notable the high quality of the positive-sequence detected voltage. Since the insignificant amplitude of the negative-sequence component, there exists high distortion in the phase-angle calculated by (11) for this component. As fast as the negative-sequence component amplitude rises to higher levels, distortion in its phase-angle calculation decreases.
+
+## IX Conclusion
+
+A new concept in grid-synchronization, the DSOGI-FLL, has been introduced in this paper. This system consists of three fundamental blocks, i.e., _i)_ the dual QSG, which uses the SOGI as a building block, _ii)_ the FLL, which truly achieves grid frequency adaptation without involving phase-angle, and _iii)_ the PNSC, which implements the ISC method on the \(\alpha\beta\) reference frame. The DSOGI-FLL:
+
+1. Exploits the ISC method on the stationary and orthogonal \(\alpha\beta\) reference frame.
+2. Does not need any trigonometric function since neither synchronous reference frame nor voltage controlled oscillator are used in its algorithm.
+3. Is frequency-adaptive by using a FLL and not a PLL.
+4. Is highly robust in front of transient events since grid frequency is more stable than voltage phase-angle.
+5. Acts as either a low-pass or a notch filter depending on the relationship between input and detected sequences.
+6. Attenuates high-order harmonics of the grid voltage.
+7. Entails light computational burden, using only five integrators for detection of both sequence components.
+
+Simulations together with an experimental evaluation were presented in order to demonstrate that DSOGI-FLL is a very suitable solution to the detection of fundamental-frequency positive- and negative-sequence components of unbalanced and distorted grid voltages.
+
+Fig. 8: Response of the DSOGI-PSC in presence of multiple disturbances.
+
+## X Acknowledgment
+
+This work was supported by Ministerio de Ciencia y Tecnologia of Spain under Project ENE2004-07881-C03-02.
+
+## XI- References
+
+* [1] C. Jauch, J. Matevosyan, T. Ackermann, and S. Bolik, "International comparison of requirements for connection of wind turbines to power systems," _Wind Energy_, vol. 8, pp. 295-306, Jul. 2005.
+* [2] F.A. Magueed, A. Sannino, J. Svensson, "Transient performance of voltage source converter under unbalanced voltage dips," in _Proc. IEEE Power Electron. Spec. Conf. (PESC'04)_, 2004, pp. 1163-1168.
+* [3] A. Timbus, P. Rodriguez, R. Teodorescu, M. Liserre and F. Blaabjerg, "Control strategies for distributed power generation systems operating on faulty grid," _in Proc. IEEE Int. Symp. Ind. Electron. (ISIE'06)_, 2006.
+* [4] S. Chung, "A phase tracking system for three phase utility interface inverters," _IEEE Trans. Power Electron._, vol. 15, pp. 431-438, May 2000.
+* [5] P. Rodriguez, J. Pou, J. Bergas, I. Candela, R. Burgos, and D. Boroyevich, "Double synchronous reference frame PLL for power converters," _in Proc. IEEE Power Electron. Spec. Conf. (PESC'05)_, 2005, pp. 1415-1421.
+* [6] M. Karimi-Ghartemani and M.R. Iravani, "A method for synchronization of power electronic converters in polluted and variable-frequency environments," _IEEE Trans. Power Systems_, vol. 19, pp. 1263-1270, Aug. 2004.
+* [7] W. V. Lyon, _Application of the Method of Symmetrical Components_, New York: McGraw-Hill, 1937.
+* [8] S. Luo and Z. Hou, "An adaptive detecting method for harmonic and reactive currents," _IEEE Trans. on Ind. Electron._, vol. 42, pp. 85-89, Feb. 1995.
+* [9] A. Sannino, M.H.J. Bollen, J. Svensson, "Voltage tolerance testing of three-phase voltage source converters," _IEEE Trans. Power Delivery_, vol. 20, Apr. 2005, pp. 1633-1639.
+* 532, Mar./Apr. 2002.
+
+Fig. 11: Experimental evaluation of the DSOGI-FLL in presence of harmonics (THD=5%). Plots from left to right: distorted grid voltage; amplitudes and phase-angles detected; detected positive-sequence signals; ripple in the detected frequency (magnified)
+
+Fig. 9: Experimental evaluation of the DSOGI-FLL in presence of voltage sags type C. Plots from left to right: faulty grid voltage; amplitudes and phase-angles detected; detected positive-sequence signals; detected negative-sequence signals
